@@ -54,7 +54,7 @@ set project_dir "${root_dir}/vivado"
 set_param project.enableVHDL2008 1
 EOF_SCRIPT
 
-# Add the device variable (needs separate heredoc since it contains a bash variable)
+# Add the device variable
 echo "set device \"$FPGA_PART\"" >> "$OUTPUT_FILE"
 
 # Continue with the main script
@@ -82,17 +82,21 @@ echo "Processing library sources..."
 # Add library sources
 NUM_LIBS=$(yq '.libraries | length' "$INPUT_FILE")
 for ((i=0; i<$NUM_LIBS; i++)); do
-    LIB_NAME=$(yq ".libraries.[$i].name" "$INPUT_FILE")
-    LIB_PATH=$(yq ".libraries.[$i].path" "$INPUT_FILE")
-    LIB_PATH=${LIB_PATH#./}  # Remove leading ./ if present
+    LIB_NAME=$(yq ".libraries[$i].name" "$INPUT_FILE")
+    NUM_PATHS=$(yq ".libraries[$i].paths | length" "$INPUT_FILE")
     
-    echo "  Adding library: $LIB_NAME from path: $LIB_PATH"
-    
+    echo "  Adding library: $LIB_NAME"
     echo "# Add files for library $LIB_NAME" >> "$OUTPUT_FILE"
-    echo "add_files -fileset sources_1 -norecurse [glob -nocomplain \${root_dir}/$LIB_PATH/*.vhd]" >> "$OUTPUT_FILE"
-    echo "set_property library $LIB_NAME [get_files -of_objects [get_filesets sources_1] \${root_dir}/$LIB_PATH/*.vhd]" >> "$OUTPUT_FILE"
-    # Add VHDL 2008 property for each library's files
-    echo "set_property file_type {VHDL 2008} [get_files -of_objects [get_filesets sources_1] \${root_dir}/$LIB_PATH/*.vhd]" >> "$OUTPUT_FILE"
+    
+    for ((j=0; j<$NUM_PATHS; j++)); do
+        LIB_PATH=$(yq ".libraries[$i].paths[$j]" "$INPUT_FILE")
+        LIB_PATH=${LIB_PATH#./}  # Remove leading ./ if present
+        
+        echo "    Processing path: $LIB_PATH"
+        echo "add_files -fileset sources_1 -norecurse [glob -nocomplain \${root_dir}/$LIB_PATH/*.vhd]" >> "$OUTPUT_FILE"
+        echo "set_property library $LIB_NAME [get_files -of_objects [get_filesets sources_1] \${root_dir}/$LIB_PATH/*.vhd]" >> "$OUTPUT_FILE"
+        echo "set_property file_type {VHDL 2008} [get_files -of_objects [get_filesets sources_1] \${root_dir}/$LIB_PATH/*.vhd]" >> "$OUTPUT_FILE"
+    done
     echo "" >> "$OUTPUT_FILE"
 done
 
@@ -110,9 +114,9 @@ echo "Processing constraint files..."
 NUM_CONSTRAINTS=$(yq '.fpga.constraints | length' "$INPUT_FILE")
 if [ "$NUM_CONSTRAINTS" != "null" ] && [ "$NUM_CONSTRAINTS" -gt 0 ]; then
     for ((i=0; i<$NUM_CONSTRAINTS; i++)); do
-        XDC_PATH=$(yq ".fpga.constraints.[$i].path" "$INPUT_FILE")
-        XDC_NAME=$(yq ".fpga.constraints.[$i].name" "$INPUT_FILE")
-        XDC_TARGETS=$(yq ".fpga.constraints.[$i].targets | join(\", \")" "$INPUT_FILE")
+        XDC_PATH=$(yq ".fpga.constraints[$i].path" "$INPUT_FILE")
+        XDC_NAME=$(yq ".fpga.constraints[$i].name" "$INPUT_FILE")
+        XDC_TARGETS=$(yq ".fpga.constraints[$i].targets | join(\", \")" "$INPUT_FILE")
         XDC_PATH=${XDC_PATH#./}
         
         echo "  Adding constraint: $XDC_NAME ($XDC_PATH) for targets: $XDC_TARGETS"

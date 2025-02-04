@@ -1,11 +1,14 @@
 # libraries.yml
 libraries:
   - name: rtl_lib
-    path: ./srcs/rtl
+    paths:
+    - srcs/rtl/components
+    - srcs/rtl
     dependencies: []
 
   - name: sim_lib
-    path: ./srcs/sim
+    paths:
+    - srcs/sim
     dependencies: [rtl_lib]
 
 top_level:

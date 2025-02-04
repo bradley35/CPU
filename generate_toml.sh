@@ -31,14 +31,28 @@ NUM_LIBS=$(yq eval '.libraries | length' "$INPUT_FILE")
 # Process each library
 for ((i=0; i<$NUM_LIBS; i++)); do
     LIB_NAME=$(yq eval ".libraries[$i].name" "$INPUT_FILE")
-    LIB_PATH=$(yq eval ".libraries[$i].path" "$INPUT_FILE")
     
-    # Remove leading ./ from path if present
-    LIB_PATH=${LIB_PATH#./}
-    
-    # Add library entry to TOML
+    # Start library entry
     echo "$LIB_NAME.files = [" >> "$OUTPUT_FILE"
-    echo "    '$LIB_PATH/*.vhd'" >> "$OUTPUT_FILE"
+    
+    # Get all paths for this library
+    NUM_PATHS=$(yq eval ".libraries[$i].paths | length" "$INPUT_FILE")
+    for ((j=0; j<$NUM_PATHS; j++)); do
+        LIB_PATH=$(yq eval ".libraries[$i].paths[$j]" "$INPUT_FILE")
+        
+        # Remove leading ./ from path if present
+        LIB_PATH=${LIB_PATH#./}
+        
+        # Add path to TOML
+        # Add comma if not the last path
+        if [ $j -lt $((NUM_PATHS-1)) ]; then
+            echo "    '$LIB_PATH/*.vhd'," >> "$OUTPUT_FILE"
+        else
+            echo "    '$LIB_PATH/*.vhd'" >> "$OUTPUT_FILE"
+        fi
+    done
+    
+    # Close library entry
     echo "]" >> "$OUTPUT_FILE"
     
     # Add blank line between libraries for readability
