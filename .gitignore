@@ -1,0 +1,7 @@
+.Xil/
+.DS_Store
+*/.DS_Store
+lib/
+output/
+vivado/
+vivado_build.tcl

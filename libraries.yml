@@ -1,0 +1,28 @@
+# libraries.yml
+libraries:
+  - name: rtl_lib
+    path: ./srcs/rtl
+    dependencies: []
+
+  - name: sim_lib
+    path: ./srcs/sim
+    dependencies: [rtl_lib]
+
+top_level:
+  simulation:
+    entity: TOP_LEVEL_TB
+    library: sim_lib
+  synthesis:
+    entity: TOP_LEVEL
+    library: rtl_lib
+
+# FPGA specific configurations
+fpga:
+  part: xc7s25csga324-1  # Arty S7-25 part number
+  constraints:
+    - name: main
+      path: ./constraints/arty_s7_25.xdc
+      targets: [synth, impl]  # Apply to both synthesis and implementation
+    # - name: timing
+    #   path: ./constraints/timing.xdc
+    #   targets: [impl]  # Apply only to implementation

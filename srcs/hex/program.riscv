@@ -1,0 +1,3 @@
+addi x1, x0, 15; # Load 15 in x1
+addi x2, x0, 30; # Load 30 in x2
+add x3, x1, x2; # add x1 and x2

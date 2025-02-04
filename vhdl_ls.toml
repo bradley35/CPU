@@ -1,0 +1,9 @@
+standard = "2008"
+[libraries]
+rtl_lib.files = [
+    'srcs/rtl/*.vhd'
+]
+
+sim_lib.files = [
+    'srcs/sim/*.vhd'
+]
