@@ -61,6 +61,8 @@ begin
         ram_qs => ram_qs
     );
 
+    -- STEP 1 in pipeline: Grab instruction
+
     instruction_fetch_inst: entity rtl_lib.instruction_fetch
      port map(
         clk => clk,
@@ -71,10 +73,13 @@ begin
         ram_q => ram_qs(0),
         output_valid => open,
         op_out => open,
-        rd_out => open,
+        rd_imm2_out => open,
         rs1_out => open,
-        rs2_out => open
+        rs2_imm1_out => open,
+        big_imm_out => open
     );
+
+    -- STEP 2 in pipeline: Registers
     
 
 end architecture;

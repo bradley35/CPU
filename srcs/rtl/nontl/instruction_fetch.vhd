@@ -93,6 +93,61 @@ package inst_types is
             others => "000"
         )
     );
+
+    type instruction_type is (R, I, S, B, U, J);  -- Added B and J types
+    type instruction_type_map is array(opcode) of instruction_type;
+
+    constant OPCODE_TO_TYPE: instruction_type_map := (
+        LOAD => I,
+        LOAD_FP => I,
+        MISC_MEM => I,
+        OP_IMM => I,
+        AUIPC => U,
+        OP_IMM_32 => I,
+        STORE => S,
+        STORE_FP => S,
+        AMO => R,
+        OP => R,
+        LUI => U,
+        OP_32 => R,
+        MADD => R,
+        MSUB => R,
+        NMSUB => R,
+        NMADD => R,
+        OP_FP => R,
+        OP_V => R,
+        BRANCH => B,    -- Changed from S to B type
+        JALR => I,
+        JAL => J,       -- Changed from U to J type
+        SYSTEM => I,
+        OP_VE => R,
+        UNDEFINED => R
+    );
+
+    type funct7_options is (SRLI, SRAI, ADD, SUB, F_SRL, F_SRA, UNDEFINED);
+    type funct7_to_bits_map is array(funct7_options) of std_logic_vector(6 downto 0);
+    type func3_func7_to_bits_map is array(funct3_options) of funct7_to_bits_map;
+
+    CONSTANT FUNCT7_TO_BITS: func3_func7_to_bits_map := (
+        SRLI_SRAI => (
+            SRLI   => "0000000",
+            SRAI   => "0100000",
+            others => "UUUUUUU"
+        ),
+        ADDSUB => (
+            ADD    => "0000000",
+            SUB    => "0100000",
+            others => "UUUUUUU"
+        ),
+        SRL_SRA => (
+            F_SRL  => "0000000",
+            F_SRA  => "0100000",
+            others => "UUUUUUU"
+        ),
+        others => (
+            others => "UUUUUUU"
+        )
+    );
 end package;
 
 library IEEE;
@@ -125,11 +180,12 @@ entity instruction_fetch is
 
         --Things to send forward
         op_out: out opcode;
-        rd_out: out STD_LOGIC_VECTOR(4 downto 0);
+        rd_imm2_out: out STD_LOGIC_VECTOR(4 downto 0);
         rs1_out: out STD_LOGIC_VECTOR(4 downto 0);
-        rs2_out: out STD_LOGIC_VECTOR(4 downto 0)
-        --funct3
-        --funct7
+        rs2_imm1_out: out STD_LOGIC_VECTOR(11 downto 0);
+        funct3_out : out funct3_options;
+        funct7_out : out funct7_options;
+        big_imm_out : out STD_LOGIC_VECTOR(19 downto 0)
         --immediate: out std_logic_vector(20 downto 0);
         --immediate_type: 
 
@@ -147,6 +203,8 @@ begin
         variable instruction_temp: STD_LOGIC_VECTOR(31 downto 0);
         variable op: opcode;
         variable funct3: funct3_options;
+        variable op_type: instruction_type;
+        variable funct7: funct7_options;
     begin
         if rising_edge(clk) then
             if ram_ready = '1' then
@@ -164,24 +222,42 @@ begin
                     op := opc;
                     end if;
                 end loop;
-
-
-                -- funct3 := UNDEFINED;
-                -- for f3 in funct3_options loop
-                --     if f3 = UNDEFINED then
-                --         next;
-                --     end if;
-                --     if FUNCT3_TO_BITS(op)(f3) = instruction_temp(14 downto 12) then
-                --     op := opc;
-                --     end if;
-                -- end loop;
+                op_type := OPCODE_TO_TYPE(op);
+                funct3 := UNDEFINED;
+                case op_type is
+                    when R | I | S | B =>
+                        for f3 in funct3_options loop
+                            if f3 = UNDEFINED then
+                                next;
+                            end if;
+                            if FUNCT3_TO_BITS(op)(f3) = instruction_temp(14 downto 12) then
+                                funct3 := f3;
+                            end if;
+                        end loop;
+                    when others =>
+                end case;
+                funct7 := UNDEFINED;
+                case funct3 is
+                    when SRLI_SRAI | SRL_SRA | ADDSUB =>
+                        for f7 in funct7_options loop
+                            if f7 = UNDEFINED then
+                                next;
+                            end if;
+                            if FUNCT7_TO_BITS(funct3)(f7) = instruction_temp(31 downto 24) then
+                                funct7 := f7;
+                            end if;
+                        end loop;
+                    when others =>
+                end case;
 
 
                 op_out <= op;
-                rd_out <= instruction_temp(11 downto 7);
+                rd_imm2_out <= instruction_temp(11 downto 7);
                 rs1_out <= instruction_temp(19 downto 15);
-                rs2_out <= instruction_temp(24 downto 20);
-                
+                rs2_imm1_out <= instruction_temp(31 downto 20);
+                big_imm_out <= instruction_temp(31 downto 12);
+                funct3_out <= funct3;
+                funct7_out <= funct7;
 
             else
                 output_valid <= '0';
