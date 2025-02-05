@@ -1,8 +1,9 @@
 standard = "2008"
 [libraries]
 rtl_lib.files = [
-    'srcs/rtl/*.vhd',
-    'srcs/rtl/components/*.vhd'
+    'srcs/rtl/components/*.vhd',
+    'srcs/rtl/nontl/*.vhd',
+    'srcs/rtl/*.vhd'
 ]
 
 sim_lib.files = [

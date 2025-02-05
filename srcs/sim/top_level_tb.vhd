@@ -13,21 +13,13 @@ architecture test of TOP_LEVEL_TB is
     signal rst : std_logic := '1';
     signal finished : std_logic := '0';
 
-    signal ram_write: ram_write_type;
-    signal ram_read: ram_read_type;
-    signal ram_q: ttbit_data;
 
 begin
 
-    ram_write.enable <= '0';
-    ram_read.enable <= '0';
-
-    MainRam_inst: entity rtl_lib.MainRam
-    port map(
+    TOP_LEVEL_inst: entity rtl_lib.TOP_LEVEL
+     port map(
         clk => clock,
-        ram_write => ram_write,
-        ram_read => ram_read,
-        ram_q => ram_q
+        reset => rst
     );
 
     clk_process:

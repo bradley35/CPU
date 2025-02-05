@@ -51,13 +51,14 @@ architecture syn of block_ram is
 begin
     process(all)
     begin
+
+        if ram_read.enable = '1' then
+            ram_q <= RAM(conv_integer(ram_read.addr));
+        end if;
+
         if rising_edge(clk) then
             if ram_write.enable = '1' then
                 RAM(conv_integer(ram_write.addr)) <= ram_write.data;
-            end if;
-            
-            if ram_read.enable = '1' then
-                ram_q <= RAM(conv_integer(ram_read.addr));
             end if;
         end if;
     end process;

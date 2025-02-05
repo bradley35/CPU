@@ -3,6 +3,7 @@ libraries:
   - name: rtl_lib
     paths:
     - srcs/rtl/components
+    - srcs/rtl/nontl
     - srcs/rtl
     dependencies: []
 
