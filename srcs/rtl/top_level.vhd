@@ -5,6 +5,7 @@ use IEEE.NUMERIC_STD.ALL;
 use rtl_lib.ram_types.all;
 use rtl_lib.ram_handler_types.all;
 use rtl_lib.register_types.all;
+use rtl_lib.inst_types.all;
 entity TOP_LEVEL is PORT(
     clk   : in std_logic;
     reset : in std_logic
@@ -24,7 +25,14 @@ architecture rtl of TOP_LEVEL is
     signal reg_read: register_values;
     signal reg_write: register_write;
     
-
+    signal fetch_valid: STD_LOGIC;
+    signal fetch_op_out: opcode;
+    signal fetch_rd_imm2_out: STD_LOGIC_VECTOR(4 downto 0);
+    signal fetch_rs1_out: STD_LOGIC_VECTOR(4 downto 0);
+    signal fetch_rs2_imm1_out: STD_LOGIC_VECTOR(11 downto 0);
+    signal fetch_big_imm_out: STD_LOGIC_VECTOR(19 downto 0);
+    signal fetch_func3_out: funct3_options;
+    signal fetch_func7_out: funct7_options;
 
 begin
 
@@ -71,15 +79,40 @@ begin
         ram_read => ram_access_requests(0),
         ram_ready => ram_access_readies(0),
         ram_q => ram_qs(0),
-        output_valid => open,
-        op_out => open,
-        rd_imm2_out => open,
-        rs1_out => open,
-        rs2_imm1_out => open,
-        big_imm_out => open
+        output_valid => fetch_valid,
+        op_out => fetch_op_out,
+        rd_imm2_out => fetch_rd_imm2_out,
+        rs1_out => fetch_rs1_out,
+        rs2_imm1_out => fetch_rs2_imm1_out,
+        big_imm_out => fetch_big_imm_out,
+        funct3_out => fetch_func3_out,
+        funct7_out => fetch_func7_out
     );
 
     -- STEP 2 in pipeline: Registers
     
+    register_read_imm_inst: entity work.register_read_imm
+        port map(
+        clk => clk,
+        input_is_valid => fetch_valid,
+        reset => reset,
+        opcd => fetch_op_out,
+        reg_read => reg_read,
+        rd_imm2_in => fetch_rd_imm2_out,
+        rs1_in => fetch_rs1_out,
+        rs2_imm1_in => fetch_rs2_imm1_out,
+        funct3_in => fetch_func3_out,
+        funct7_in => fetch_func7_out,
+        big_imm_in => fetch_big_imm_out,
+        operand_1 => open,
+        operand_2 => open,
+        rd_out => open,
+        opcode_out => open,
+        funct3_out => open,
+        funct7_out => open
+    );
+
+
+    -- STEP 3 in pipeline: ALU
 
 end architecture;

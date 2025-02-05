@@ -9,8 +9,9 @@ entity register_read_imm is
     port (
         clk   : in std_logic;
         reset : in std_logic;
-        opcode: in opcode;
-        reg_red: in register_values;
+        opcd: in opcode;
+        input_is_valid: in std_logic;
+        reg_read: in register_values;
         rd_imm2_in: in STD_LOGIC_VECTOR(4 downto 0);
         rs1_in: in STD_LOGIC_VECTOR(4 downto 0);
         rs2_imm1_in: in STD_LOGIC_VECTOR(11 downto 0);
@@ -18,33 +19,46 @@ entity register_read_imm is
         funct7_in : in funct7_options;
         big_imm_in : in STD_LOGIC_VECTOR(19 downto 0);
 
-
-
+        -- outputs
 
         operand_1: out ttbit_data;
-        operand_2: out ttbit_data
+        operand_2: out ttbit_data;
+
+        rd_out: out STD_LOGIC_VECTOR(4 downto 0);
+        -- Need to handle jumps
+        opcode_out: out opcode;
+        funct3_out: out funct3_options;
+        funct7_out: out funct7_options
     );
 end entity register_read_imm;
 
 architecture rtl of register_read_imm is
-   
+   -- ALU is used for caclulating memory address, NOT for jump location
 begin
 
     process(all)
         variable temporary_cat: STD_LOGIC_VECTOR(11 downto 0);
     begin
     -- GRAB rs1
-    if rising_edge(clk) then
-        -- GRAB rs1    
-        operand_1 <= reg_red.x_regs(to_integer(unsigned(rs1_in)));
+    if not input_is_valid then
+    elsif rising_edge(clk) then
 
-        case OPCODE_TO_TYPE(opcode) is
+        opcode_out <= opcd;
+        rd_out <= rd_imm2_in;
+        funct3_out <= funct3_in;
+        funct7_out <= funct7_in;
+
+
+        -- GRAB rs1    
+        operand_1 <= reg_read.x_regs(to_integer(unsigned(rs1_in)));
+
+        case OPCODE_TO_TYPE(opcd) is
             when R | B => 
                 -- No Immediate
                 -- For B type instructions, we are comapring rs1 and rs2
 
                 --Deal with modifying PC later
-                operand_2 <= reg_red.x_regs(to_integer(unsigned(rs2_imm1_in(4 downto 0))));
+                operand_2 <= reg_read.x_regs(to_integer(unsigned(rs2_imm1_in(4 downto 0))));
             when I =>
                 -- All immediate
                 operand_2 <= STD_ULOGIC_VECTOR(resize(signed(rs2_imm1_in), 32));
@@ -66,11 +80,6 @@ begin
 
     end process;
 
-
-
-    -- Check if rs2 is immediate, if so sign extend, if not grab rs2
-
-    -- hand results to ALU
     
 
 end architecture;
