@@ -34,6 +34,13 @@ architecture rtl of TOP_LEVEL is
     signal fetch_func3_out: funct3_options;
     signal fetch_func7_out: funct7_options;
 
+    signal reg_out_operand_1: ttbit_data;
+    signal reg_out_operand_2: ttbit_data;
+    signal reg_rd_out:  STD_LOGIC_VECTOR(4 downto 0);
+    signal reg_opcode_out: opcode;
+    signal reg_funct3_out : funct3_options;
+    signal reg_funct7_out: funct7_options;
+
 begin
 
     ram_write.enable <= '0';
@@ -104,15 +111,32 @@ begin
         funct3_in => fetch_func3_out,
         funct7_in => fetch_func7_out,
         big_imm_in => fetch_big_imm_out,
-        operand_1 => open,
-        operand_2 => open,
-        rd_out => open,
-        opcode_out => open,
-        funct3_out => open,
-        funct7_out => open
+        operand_1 => reg_out_operand_1,
+        operand_2 => reg_out_operand_2,
+        rd_out => reg_rd_out,
+        opcode_out => reg_opcode_out,
+        funct3_out => reg_funct3_out,
+        funct7_out => reg_funct7_out
     );
 
 
     -- STEP 3 in pipeline: ALU
+
+
+    ALU_inst: entity work.ALU
+     port map(
+        clk => clk,
+        reset => reset,
+        operand_1 => reg_out_operand_1,
+        operand_2 => reg_out_operand_2,
+        rd_in => reg_rd_out,
+        opcode_in => reg_opcode_out,
+        funct3_in => reg_funct3_out,
+        funct7_in => reg_funct7_out,
+        result_is_branch => open,
+        result_is_memory_address => open,
+        memory_is_write => open,
+        result => open
+    );
 
 end architecture;

@@ -6,6 +6,6 @@ use IEEE.std_logic_unsigned.all;
 
 package alu_ops is
 
-    type ALU_OP is (ADD, SUB, MULT, DIV, RSHIFTA, RSHIFTL, LSHIFTL, EQ, NE, LT, GE, LTU, GEU, A_XOR, A_OR, A_AND);
+    type ALU_OP is (ADD, SUB, RSHIFTA, RSHIFTL, LSHIFTL, EQ, NE, LT, GE, LTU, GEU, A_XOR, A_OR, A_AND);
 
 end package;
