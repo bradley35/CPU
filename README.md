@@ -24,4 +24,3 @@ project/
     ├── memory/             — Tests targettomg the cache + BRAM memory store
     └── CPU/                - Tests targetting the CPU.
                               Includes targeted assembly tests as well as randomized tests.
-    
