@@ -4,7 +4,7 @@ Personal project to push knowledge of computer architecture and learn SystemVeri
 ## CPU Structure
 * 5 stage pipeline: Instruction Fetch -> Instruction Decode -> Execute -> Memory Read/Write -> Writeback
   - Everything is in-order, with no branch prediction
-  - Stalls when neccesary: waiting on earlier read, or load/store enters memory stage while it is not ready to accept a new request
+  - Stalls when neccesary: waiting on earlier read or load/store enters memory stage while it is not ready to accept a new request
 * Seperate Instruction + Data Caches
   - Caches built so that they will be inferred as BRAM
   - Access to respective caches is over AXI4-Lite
