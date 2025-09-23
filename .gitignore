@@ -1,0 +1,7 @@
+*.fst
+results.xml
+verible-fmt
+verilator
+.vscode/
+__pycache__/
+sim_build/
