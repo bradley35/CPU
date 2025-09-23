@@ -24,3 +24,7 @@ project/
     ├── memory/             — Tests targettomg the cache + BRAM memory store
     └── CPU/                - Tests targetting the CPU.
                               Includes targeted assembly tests as well as randomized tests.
+```
+Note on AI: I did not use AI to write any of the RTL code. However, I found that ChatGPT is very good at writing tests and as such, I used it for two things:
+a) writing tests based on a description (i.e. jump into a branch), modelled after ones I had already written, and
+b) helping to write the randomized fuzz tests.
