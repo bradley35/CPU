@@ -1,6 +1,8 @@
 module tp_lvl (
-  input logic clk,
-  input logic rst
+  input  logic clk,
+  input  logic rst,
+  input  logic rx,
+  output logic tx
 );
 
   import instruction_decode_types::*;
@@ -74,6 +76,7 @@ module tp_lvl (
     .dump_cache
 
   );
+
   memory_with_bram_cache data_cache (
     .clk,
     .rst,
@@ -84,8 +87,31 @@ module tp_lvl (
   );
 
   axil_interface_if #(.DATA_W(64)) data_memory_interface ();
+  axil_interface_if #(.DATA_W(64)) uart_interface ();
+  axil_interface_if #(.DATA_W(64)) data_controlled_interface ();
   axil_interface_if #(.DATA_W(64)) if_memory_interface ();
   axil_interface_if #(.DATA_W(32)) x32_bit_if_memory_interface ();
+
+
+  uart_over_axi4lite uart (
+    .clk,
+    .rst,
+    .rx,
+    .tx,
+    .read_access (uart_interface.rd_slv),
+    .write_access(uart_interface.wr_slv)
+  );
+
+  memory_controller memory_controller (
+    .clk,
+    .rst,
+    .write      (data_controlled_interface.wr_slv),
+    .read       (data_controlled_interface.rd_slv),
+    .cache_read (data_memory_interface.rd_mst),
+    .cache_write(data_memory_interface.wr_mst),
+    .uart_read  (uart_interface.rd_mst),
+    .uart_write (uart_interface.wr_mst)
+  );
 
   //64 to 32 bit memory translator
   //Remove the thirty-two bit flip
@@ -277,8 +303,8 @@ module tp_lvl (
 
     .branch_invalidate(branch_invalidate),
     .assert_stall     (),
-    .mem_rd           (data_memory_interface.rd_mst),
-    .mem_wr           (data_memory_interface.wr_mst),
+    .mem_rd           (data_controlled_interface.rd_mst),
+    .mem_wr           (data_controlled_interface.wr_mst),
 
     .result_q(),
 

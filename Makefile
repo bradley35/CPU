@@ -14,8 +14,10 @@ random_no_mem:
 	$(MAKE) results.xml COCOTB_TEST_MODULES=tests.CPU.random.random_no_mem
 random_mem:
 	$(MAKE) results.xml COCOTB_TEST_MODULES=tests.CPU.random.random_with_mem
+uart:
+	$(MAKE) results.xml TOPLEVEL=uart_tb MODULE=tests.uart.uart_test
 all: tp_lvl random_no_mem random_mem
-.PHONY: tp_lvl random_no_mem random_mem all
+.PHONY: tp_lvl random_no_mem random_mem uart all
 
  
 

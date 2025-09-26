@@ -5,3 +5,6 @@ verilator
 .vscode/
 __pycache__/
 sim_build/
+**/.DS_Store
+firmware/build/
+firmware/bin_seperator/target/

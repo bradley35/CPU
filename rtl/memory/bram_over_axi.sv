@@ -8,7 +8,8 @@
 module bram_over_axi #(
   parameter int MEMORY_SIZE_BYTES       = 4096,
   parameter int MEMORY_BLOCK_MAX_ACCESS = 72,
-  parameter int FIXED_NUMBER_OF_BEATS   = 16
+  parameter int FIXED_NUMBER_OF_BEATS   = 16,
+  parameter bit DO_INIT                 = 1
 ) (
   logic clk,
   logic rst,
@@ -227,6 +228,12 @@ module bram_over_axi #(
   generate
     for (i = 0; i < NUMBER_OF_BLOCKS; i++) begin : generate_blocks
       logic [BLOCK_SIZE-1:0] mem_blk[ENTRIES_PER_BLOCK];
+      if (DO_INIT) begin
+        initial begin
+          $display("Reading block: %s", $sformatf("firmware/build/c%0d.chunk", i));
+          $readmemh($sformatf("firmware/build/c%0d.chunk", i), mem_blk);
+        end
+      end
 
       always @(posedge clk) begin
         automatic
