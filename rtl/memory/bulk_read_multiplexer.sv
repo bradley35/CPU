@@ -22,7 +22,7 @@ module bulk_read_multiplexer (
   assign data_dumping = data_access.dumping_cache;
 
 
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       req_addr_buffer      <= '0;
       req_write_buffer     <= '0;

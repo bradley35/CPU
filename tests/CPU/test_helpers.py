@@ -8,6 +8,11 @@ from tests.CPU.riscv_tests_gen import *
 async def resetAndPrepare(dut):
     dut.rst.value = 1
     await ReadWrite()
+    dut.clk.value = 0
+    await ReadWrite()
+    dut.clk.value = 1
+    await ReadWrite()
+    dut.clk.value = 0
     dut.rst.value = 0
     await ReadWrite()
 

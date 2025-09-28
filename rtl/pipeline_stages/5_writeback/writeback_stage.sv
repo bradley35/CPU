@@ -31,7 +31,7 @@ module writeback_stage (
 );
 
   typedef logic [63:0] double_word;
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       done_executing <= 0;
       wb_buffer_1    <= '0;

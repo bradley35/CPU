@@ -120,7 +120,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
   logic           [        WRITE_BUFFER_LENGTH_BYTES * 8 - 1 : 0] write_buffer;
 
 
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       recieve_state_q <= RC_IDLE;
     end else begin

@@ -129,10 +129,14 @@ module memory_with_bram_cache #(
   assign memory_access_out.dumping_cache = dumping;
 
 
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       current_state = IDLE;
-      cache_memory          <= '{default: '{default: '0}};
+`ifdef VIVADO
+      cache_memory <= '{default: '0};
+`else
+      cache_memory <= '{default: '{default: '0}};
+`endif
       cache_tags            <= '{default: '0};
       cache_valid_dirty     <= '{default: '0};
       retrieved_cache_line  <= '{default: '0};

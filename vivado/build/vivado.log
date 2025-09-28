@@ -1,0 +1,1063 @@
+#-----------------------------------------------------------
+# Vivado v2024.2 (64-bit)
+# SW Build 5239630 on Fri Nov 08 22:34:34 MST 2024
+# IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+# SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+# Start of session at: Sun Sep 28 18:37:57 2025
+# Process ID         : 211348
+# Current directory  : /shared/DebianVMSharedDirectory/CPU2/vivado
+# Command line       : vivado -mode batch -source synth.tcl -log build/vivado.log -nojournal -notrace
+# Log file           : /shared/DebianVMSharedDirectory/CPU2/vivado/build/vivado.log
+# Journal file       : 
+# Running On         : debian-vm
+# Platform           : Debian
+# Operating System   : Debian GNU/Linux 12 (bookworm)
+# Processor Detail   : VirtualApple @ 2.50GHz
+# CPU Frequency      : 2502.057 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 8
+# Host memory        : 16754 MB
+# Swap memory        : 1024 MB
+# Total Virtual      : 17778 MB
+# Available Virtual  : 13242 MB
+#-----------------------------------------------------------
+source synth.tcl -notrace
+Command: synth_design -top tp_lvl -part xc7s25csga324
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7s25'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7s25'
+INFO: [Device 21-403] Loading part xc7s25csga324-2
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 7 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 211370
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2478.602 ; gain = 427.652 ; free physical = 9698 ; free virtual = 11276
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-11065] parameter 'MEMORY_ADDRESS_BIT_LENGTH' becomes localparam in 'bram_over_axi' with formal parameter declaration list [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:31]
+WARNING: [Synth 8-11065] parameter 'BLOCK_SIZE' becomes localparam in 'bram_over_axi' with formal parameter declaration list [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:32]
+WARNING: [Synth 8-11065] parameter 'NUMBER_OF_BLOCKS' becomes localparam in 'bram_over_axi' with formal parameter declaration list [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:34]
+WARNING: [Synth 8-11065] parameter 'ENTRIES_PER_BLOCK' becomes localparam in 'bram_over_axi' with formal parameter declaration list [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:35]
+WARNING: [Synth 8-6901] identifier 'writeback_neccesary' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:222]
+WARNING: [Synth 8-6901] identifier 'writeback_neccesary' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:240]
+WARNING: [Synth 8-10636] default field of an assignment pattern cannot contain another assignment pattern [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:398]
+WARNING: [Synth 8-6901] identifier 'read_buffer_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:65]
+WARNING: [Synth 8-6901] identifier 'read_buffer_left_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:65]
+WARNING: [Synth 8-6901] identifier 'read_buffer_left_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:75]
+WARNING: [Synth 8-6901] identifier 'read_buffer_left_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:77]
+WARNING: [Synth 8-6901] identifier 'read_buffer_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:77]
+WARNING: [Synth 8-6901] identifier 'read_buffer_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:77]
+WARNING: [Synth 8-6901] identifier 'read_buffer_left_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:79]
+WARNING: [Synth 8-6901] identifier 'read_buffer_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:79]
+WARNING: [Synth 8-6901] identifier 'read_buffer_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:79]
+WARNING: [Synth 8-6901] identifier 'read_buffer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:82]
+WARNING: [Synth 8-6901] identifier 'read_buffer_left_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:82]
+WARNING: [Synth 8-6901] identifier 'write_buffer_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:89]
+WARNING: [Synth 8-6901] identifier 'write_buffer_left_pointer' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:89]
+WARNING: [Synth 8-10636] default field of an assignment pattern cannot contain another assignment pattern [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode_types.sv:175]
+WARNING: [Synth 8-10636] default field of an assignment pattern cannot contain another assignment pattern [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode_types.sv:239]
+WARNING: [Synth 8-6901] identifier 'operand_1_d' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:88]
+WARNING: [Synth 8-6901] identifier 'operand_2_d' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:89]
+WARNING: [Synth 8-6901] identifier 'misc_op_d' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:90]
+WARNING: [Synth 8-6901] identifier 'rd_d' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:91]
+WARNING: [Synth 8-6901] identifier 'operand_1_fwd_d' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:92]
+WARNING: [Synth 8-6901] identifier 'operand_2_fwd_d' is used before its declaration [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:93]
+WARNING: [Synth 8-10180] variable 'operand_1_next_register' must explicitly be declared as automatic or static [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:295]
+WARNING: [Synth 8-10180] variable 'operand_2_next_register' must explicitly be declared as automatic or static [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:296]
+WARNING: [Synth 8-10180] variable 'offset' must explicitly be declared as automatic or static [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:79]
+INFO: [Synth 8-6157] synthesizing module 'tp_lvl' [/shared/DebianVMSharedDirectory/CPU2/rtl/tp_lvl.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'axi_interface_if' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axi_interface_if.sv:6]
+INFO: [Synth 8-6155] done synthesizing module 'axi_interface_if' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axi_interface_if.sv:6]
+INFO: [Synth 8-6157] synthesizing module 'bulk_read_interface' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_interface.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'bulk_read_interface' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_interface.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'bulk_read_interface' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_interface.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'bulk_read_interface' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_interface.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'bulk_read_interface' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_interface.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'bulk_read_interface' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_interface.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'axil_interface_if' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+	Parameter DATA_W bound to: 64 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'axil_interface_if' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'axil_interface_if' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+	Parameter DATA_W bound to: 64 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'axil_interface_if' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'axil_interface_if' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+	Parameter DATA_W bound to: 64 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'axil_interface_if' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'axil_interface_if' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+	Parameter DATA_W bound to: 64 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'axil_interface_if' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+INFO: [Synth 8-6157] synthesizing module 'axil_interface_if' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+	Parameter DATA_W bound to: 32 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'axil_interface_if' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:11]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/tp_lvl.sv:33]
+INFO: [Synth 8-6157] synthesizing module 'registers' [/shared/DebianVMSharedDirectory/CPU2/rtl/registers/registers.sv:5]
+INFO: [Synth 8-6155] done synthesizing module 'registers' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/registers/registers.sv:5]
+INFO: [Synth 8-6157] synthesizing module 'bulk_read_to_axi_adapter' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:1]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:97]
+INFO: [Synth 8-6155] done synthesizing module 'bulk_read_to_axi_adapter' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'bram_over_axi' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:7]
+INFO: [Synth 8-251] Reading block: firmware/build/c0.chunk [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:235]
+INFO: [Synth 8-3876] $readmem data file '../firmware/build/c0.chunk' is read successfully [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:237]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:68]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:74]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:111]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:153]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:68]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:197]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:74]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:215]
+INFO: [Synth 8-6155] done synthesizing module 'bram_over_axi' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:7]
+INFO: [Synth 8-6157] synthesizing module 'bulk_read_multiplexer' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_multiplexer.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'bulk_read_multiplexer' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_multiplexer.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'memory_with_bram_cache' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:1]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:183]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:252]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:286]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:359]
+INFO: [Synth 8-6155] done synthesizing module 'memory_with_bram_cache' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'memory_with_bram_cache__parameterized0' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:1]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:183]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+WARNING: [Synth 8-6090] variable 'cache_valid_dirty' is written by both blocking and non-blocking assignments, entire logic could be removed [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:226]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:252]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:286]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:359]
+INFO: [Synth 8-6155] done synthesizing module 'memory_with_bram_cache__parameterized0' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'uart_over_axi4lite' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:1]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:128]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:162]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:166]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:202]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:221]
+INFO: [Synth 8-155] case statement is not full and has no default [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:252]
+INFO: [Synth 8-6155] done synthesizing module 'uart_over_axi4lite' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'memory_controller' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:1]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:49]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:55]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:73]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:113]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:118]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:143]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:163]
+INFO: [Synth 8-6155] done synthesizing module 'memory_controller' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'instruction_fetch' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/1_instruction_fetch/instruction_fetch.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'instruction_fetch' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/1_instruction_fetch/instruction_fetch.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'instruction_decode' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:5]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:133]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:137]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:146]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:172]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:219]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:238]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:252]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:306]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:318]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:376]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:388]
+INFO: [Synth 8-6155] done synthesizing module 'instruction_decode' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:5]
+INFO: [Synth 8-6157] synthesizing module 'execute' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/3_execute/execute.sv:1]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/3_execute/execute.sv:88]
+INFO: [Synth 8-294] found qualifier unique on case statement: implementing as parallel_case [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/3_execute/execute.sv:102]
+INFO: [Synth 8-6155] done synthesizing module 'execute' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/3_execute/execute.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'memoryrw' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'memoryrw' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'writeback_stage' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/5_writeback/writeback_stage.sv:3]
+INFO: [Synth 8-6155] done synthesizing module 'writeback_stage' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/5_writeback/writeback_stage.sv:3]
+INFO: [Synth 8-6155] done synthesizing module 'tp_lvl' (0#1) [/shared/DebianVMSharedDirectory/CPU2/rtl/tp_lvl.sv:1]
+WARNING: [Synth 8-87] always_comb on 'bulk_read_in\.req_ready_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:100]
+WARNING: [Synth 8-87] always_comb on 'next_state_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:103]
+WARNING: [Synth 8-3848] Net axi_write_out\.wlast in module/entity bulk_read_to_axi_adapter does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:7]
+WARNING: [Synth 8-3848] Net axi_write_out\.wuser in module/entity bulk_read_to_axi_adapter does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:7]
+WARNING: [Synth 8-87] always_comb on 'read_slv\.rvalid_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:114]
+WARNING: [Synth 8-87] always_comb on 'read_slv\.arready_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:115]
+WARNING: [Synth 8-87] always_comb on 'read_slv\.rresp_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:125]
+WARNING: [Synth 8-87] always_comb on 'read_slv\.rlast_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:126]
+WARNING: [Synth 8-87] always_comb on 'write_slv\.awready_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:156]
+WARNING: [Synth 8-87] always_comb on 'write_slv\.wready_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:157]
+WARNING: [Synth 8-87] always_comb on 'write_slv\.bvalid_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:158]
+WARNING: [Synth 8-87] always_comb on 'write_slv\.bresp_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:159]
+WARNING: [Synth 8-87] always_comb on 'araddr_next_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:199]
+WARNING: [Synth 8-87] always_comb on 'read_current_beat_next_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:200]
+WARNING: [Synth 8-87] always_comb on 'awaddr_next_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:218]
+WARNING: [Synth 8-87] always_comb on 'write_current_beat_next_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:220]
+WARNING: [Synth 8-3848] Net write_slv\.buser in module/entity bram_over_axi does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:19]
+WARNING: [Synth 8-3848] Net read_slv\.ruser in module/entity bram_over_axi does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:20]
+WARNING: [Synth 8-3848] Net memory_access_out\.dumping_cache in module/entity bulk_read_multiplexer does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_multiplexer.sv:4]
+WARNING: [Synth 8-11357] Potential Runtime issue for 3D-RAM or RAM from Record/Structs for RAM  cache_memory_reg with 16384 registers
+WARNING: [Synth 8-87] always_comb on 'effective_state_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:253]
+WARNING: [Synth 8-3848] Net cache_wr_int\.bresp in module/entity memory_with_bram_cache does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:23]
+WARNING: [Synth 8-3848] Net cache_wr_int\.buser in module/entity memory_with_bram_cache does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:23]
+WARNING: [Synth 8-3848] Net offset in module/entity memory_with_bram_cache does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:370]
+WARNING: [Synth 8-3848] Net cache_rd_int\.rresp in module/entity memory_with_bram_cache does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:24]
+WARNING: [Synth 8-3848] Net cache_rd_int\.ruser in module/entity memory_with_bram_cache does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:24]
+WARNING: [Synth 8-3848] Net offset in module/entity memory_with_bram_cache does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:376]
+WARNING: [Synth 8-87] always_comb on 'recieve_state_d_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:205]
+WARNING: [Synth 8-87] always_comb on 'tx_output_state_d_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:238]
+WARNING: [Synth 8-87] always_comb on 'read_access\.arready_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:255]
+WARNING: [Synth 8-87] always_comb on 'reader_state_d_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:269]
+WARNING: [Synth 8-3848] Net writer_state_q in module/entity uart_over_axi4lite does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:101]
+WARNING: [Synth 8-3848] Net read_access\.rresp in module/entity uart_over_axi4lite does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:13]
+WARNING: [Synth 8-3848] Net read_access\.ruser in module/entity uart_over_axi4lite does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:13]
+WARNING: [Synth 8-3848] Net write_access\.bresp in module/entity uart_over_axi4lite does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:14]
+WARNING: [Synth 8-3848] Net write_access\.buser in module/entity uart_over_axi4lite does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:14]
+WARNING: [Synth 8-3848] Net read\.rresp in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:5]
+WARNING: [Synth 8-3848] Net read\.ruser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:5]
+WARNING: [Synth 8-3848] Net write\.bresp in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:6]
+WARNING: [Synth 8-3848] Net write\.buser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:6]
+WARNING: [Synth 8-3848] Net cache_read\.arprot in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:8]
+WARNING: [Synth 8-3848] Net cache_read\.aruser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:8]
+WARNING: [Synth 8-3848] Net cache_write\.awprot in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:9]
+WARNING: [Synth 8-3848] Net cache_write\.awuser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:9]
+WARNING: [Synth 8-3848] Net cache_write\.wuser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:9]
+WARNING: [Synth 8-3848] Net uart_read\.arprot in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:11]
+WARNING: [Synth 8-3848] Net uart_read\.aruser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:11]
+WARNING: [Synth 8-3848] Net uart_write\.awprot in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:12]
+WARNING: [Synth 8-3848] Net uart_write\.awuser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:12]
+WARNING: [Synth 8-3848] Net uart_write\.wuser in module/entity memory_controller does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_controller.sv:12]
+WARNING: [Synth 8-3848] Net mem_rd\.arprot in module/entity instruction_fetch does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/1_instruction_fetch/instruction_fetch.sv:17]
+WARNING: [Synth 8-3848] Net mem_rd\.aruser in module/entity instruction_fetch does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/1_instruction_fetch/instruction_fetch.sv:17]
+WARNING: [Synth 8-87] always_comb on 'operand_2_next_register_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:312]
+WARNING: [Synth 8-87] always_comb on 'misc_op_d_reg' did not result in combinational logic [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:314]
+WARNING: [Synth 8-3848] Net mem_wr\.awprot in module/entity memoryrw does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:46]
+WARNING: [Synth 8-3848] Net mem_wr\.awuser in module/entity memoryrw does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:46]
+WARNING: [Synth 8-3848] Net mem_wr\.wuser in module/entity memoryrw does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:46]
+WARNING: [Synth 8-3848] Net mem_rd\.arprot in module/entity memoryrw does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:47]
+WARNING: [Synth 8-3848] Net mem_rd\.aruser in module/entity memoryrw does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/4_memoryrw/memoryrw.sv:47]
+WARNING: [Synth 8-3848] Net if_memory_interface\.awaddr in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:40]
+WARNING: [Synth 8-3848] Net if_memory_interface\.awprot in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:41]
+WARNING: [Synth 8-3848] Net if_memory_interface\.awuser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:42]
+WARNING: [Synth 8-3848] Net if_memory_interface\.wdata in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:46]
+WARNING: [Synth 8-3848] Net if_memory_interface\.wstrb in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:47]
+WARNING: [Synth 8-3848] Net if_memory_interface\.wuser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:48]
+WARNING: [Synth 8-3848] Net if_memory_interface\.bready in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:55]
+WARNING: [Synth 8-3848] Net if_memory_interface\.arprot in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:58]
+WARNING: [Synth 8-3848] Net if_memory_interface\.aruser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:59]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.rresp in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:64]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.ruser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:65]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.awaddr in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:40]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.awprot in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:41]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.awuser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:42]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.awvalid in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:43]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.awready in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:44]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.wdata in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:46]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.wstrb in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:47]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.wuser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:48]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.wvalid in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:49]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.wready in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:50]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.bresp in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:52]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.buser in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:53]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.bvalid in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:54]
+WARNING: [Synth 8-3848] Net x32_bit_if_memory_interface\.bready in module/entity tp_lvl does not have driver. [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/lib/axil_interface_if.sv:55]
+WARNING: [Synth 8-7129] Port mem_wr\.awprot[2] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.awprot[1] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.awprot[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.awuser[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.wuser[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_rd\.arprot[2] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_rd\.arprot[1] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_rd\.arprot[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_rd\.aruser[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.bresp[1] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.bresp[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.buser[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.bvalid in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[63] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[62] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[61] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[60] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[59] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[58] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[57] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[56] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[55] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[54] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[53] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[52] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[51] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[50] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[49] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[48] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[47] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[46] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[45] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[44] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[43] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[42] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[41] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[40] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[39] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[38] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[37] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[36] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[35] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[34] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[33] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[32] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[31] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[30] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[29] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[28] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[27] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[26] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[25] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[24] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[23] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[22] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[21] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[20] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[19] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[18] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[17] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[16] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[15] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[14] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[13] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[12] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[11] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[10] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[9] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[8] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[7] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[6] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[5] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[4] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[3] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[2] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[1] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.araddr[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.arprot[2] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.arprot[1] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.arprot[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.aruser[0] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.arvalid in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.arready in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[63] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[62] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[61] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[60] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[59] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[58] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[57] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[56] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[55] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[54] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[53] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[52] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[51] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[50] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[49] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[48] in module memoryrw is either unconnected or has no load
+WARNING: [Synth 8-7129] Port mem_wr\.rdata[47] in module memoryrw is either unconnected or has no load
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 2993.613 ; gain = 942.664 ; free physical = 9163 ; free virtual = 10741
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 2993.887 ; gain = 942.938 ; free physical = 9163 ; free virtual = 10741
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 2993.887 ; gain = 942.938 ; free physical = 9163 ; free virtual = 10741
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 3074.668 ; gain = 8.078 ; free physical = 9083 ; free virtual = 10660
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/shared/DebianVMSharedDirectory/CPU2/vivado/constraints.xdc]
+Finished Parsing XDC File [/shared/DebianVMSharedDirectory/CPU2/vivado/constraints.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/shared/DebianVMSharedDirectory/CPU2/vivado/constraints.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/tp_lvl_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/tp_lvl_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4115.594 ; gain = 0.000 ; free physical = 8115 ; free virtual = 9693
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.15 ; elapsed = 00:00:00.16 . Memory (MB): peak = 4115.758 ; gain = 0.090 ; free physical = 8115 ; free virtual = 9693
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:31 ; elapsed = 00:00:31 . Memory (MB): peak = 4133.727 ; gain = 2082.777 ; free physical = 8105 ; free virtual = 9686
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7s25csga324-2
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:31 ; elapsed = 00:00:31 . Memory (MB): peak = 4141.852 ; gain = 2090.902 ; free physical = 8105 ; free virtual = 9686
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:31 ; elapsed = 00:00:31 . Memory (MB): peak = 4141.898 ; gain = 2090.949 ; free physical = 8105 ; free virtual = 9686
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'current_state_reg' in module 'bulk_read_to_axi_adapter'
+INFO: [Synth 8-802] inferred FSM for state register 'recieve_state_q_reg' in module 'uart_over_axi4lite'
+INFO: [Synth 8-802] inferred FSM for state register 'tx_output_state_q_reg' in module 'uart_over_axi4lite'
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_sequential_next_state_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:103]
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_onehot_next_state_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:103]
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 AD_IDLE |                              001 | 00000000000000000000000000000000
+                AD_WRITE |                              010 | 00000000000000000000000000000010
+                 AD_READ |                              100 | 00000000000000000000000000000001
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'current_state_reg' using encoding 'one-hot' in module 'bulk_read_to_axi_adapter'
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_onehot_next_state_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:103]
+WARNING: [Synth 8-327] inferring latch for variable 'bulk_read_in\.req_ready_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bulk_read_to_axi_adapter.sv:100]
+WARNING: [Synth 8-327] inferring latch for variable 'write_slv\.awready_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:156]
+WARNING: [Synth 8-327] inferring latch for variable 'write_slv\.wready_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:157]
+WARNING: [Synth 8-327] inferring latch for variable 'write_slv\.bresp_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:159]
+WARNING: [Synth 8-327] inferring latch for variable 'write_slv\.bvalid_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:158]
+WARNING: [Synth 8-327] inferring latch for variable 'read_slv\.arready_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:115]
+WARNING: [Synth 8-327] inferring latch for variable 'write_current_beat_next_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:220]
+WARNING: [Synth 8-327] inferring latch for variable 'awaddr_next_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:218]
+WARNING: [Synth 8-327] inferring latch for variable 'read_current_beat_next_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:200]
+WARNING: [Synth 8-327] inferring latch for variable 'araddr_next_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:199]
+WARNING: [Synth 8-327] inferring latch for variable 'read_slv\.rresp_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:125]
+WARNING: [Synth 8-327] inferring latch for variable 'read_slv\.rlast_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:126]
+WARNING: [Synth 8-327] inferring latch for variable 'read_slv\.rvalid_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/bram_over_axi.sv:114]
+WARNING: [Synth 8-327] inferring latch for variable 'effective_state_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/memory/memory_with_bram_cache.sv:253]
+WARNING: [Synth 8-5402] Detected an instance with large pin count 1049610
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_sequential_tx_output_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:238]
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_onehot_tx_output_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:238]
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                SND_IDLE |                               00 | 00000000000000000000000000000000
+           SND_START_BIT |                               01 | 00000000000000000000000000000001
+                SND_DATA |                               10 | 00000000000000000000000000000010
+                SND_STOP |                               11 | 00000000000000000000000000000011
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'tx_output_state_q_reg' using encoding 'sequential' in module 'uart_over_axi4lite'
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_sequential_tx_output_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:238]
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_sequential_recieve_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:205]
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_onehot_recieve_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:205]
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 RC_IDLE |                               00 | 00000000000000000000000000000000
+       RC_START_RECIEVED |                               01 | 00000000000000000000000000000001
+       RC_RECIEVING_DATA |                               10 | 00000000000000000000000000000010
+                 RC_STOP |                               11 | 00000000000000000000000000000011
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'recieve_state_q_reg' using encoding 'sequential' in module 'uart_over_axi4lite'
+WARNING: [Synth 8-327] inferring latch for variable 'FSM_sequential_recieve_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:205]
+WARNING: [Synth 8-327] inferring latch for variable 'read_access\.arready_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:255]
+WARNING: [Synth 8-327] inferring latch for variable 'reader_state_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/uart/uart.sv:269]
+WARNING: [Synth 8-327] inferring latch for variable 'operand_2_next_register_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:312]
+WARNING: [Synth 8-327] inferring latch for variable 'misc_op_d_reg' [/shared/DebianVMSharedDirectory/CPU2/rtl/pipeline_stages/2_instruction_decode/instruction_decode.sv:314]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:52 ; elapsed = 00:00:52 . Memory (MB): peak = 4143.996 ; gain = 2093.047 ; free physical = 8089 ; free virtual = 9669
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   64 Bit       Adders := 5     
+	   3 Input   64 Bit       Adders := 1     
+	   2 Input   32 Bit       Adders := 2     
+	   2 Input   13 Bit       Adders := 2     
+	   2 Input   11 Bit       Adders := 3     
+	   3 Input   11 Bit       Adders := 3     
+	   2 Input   10 Bit       Adders := 6     
+	   2 Input    9 Bit       Adders := 2     
+	   2 Input    6 Bit       Adders := 2     
+	   2 Input    5 Bit       Adders := 4     
+	   2 Input    4 Bit       Adders := 3     
+	   2 Input    3 Bit       Adders := 2     
++---XORs : 
+	   2 Input     64 Bit         XORs := 1     
++---Registers : 
+	             1024 Bit    Registers := 2     
+	               64 Bit    Registers := 181   
+	               53 Bit    Registers := 8     
+	               32 Bit    Registers := 4     
+	               10 Bit    Registers := 5     
+	                8 Bit    Registers := 36    
+	                5 Bit    Registers := 7     
+	                4 Bit    Registers := 6     
+	                3 Bit    Registers := 6     
+	                1 Bit    Registers := 49    
++---RAMs : 
+	              32K Bit	(512 X 64 bit)          RAMs := 1     
++---ROMs : 
+	                    ROMs := 1     
++---Muxes : 
+	1024 Input 1024 Bit        Muxes := 1     
+	   2 Input 1024 Bit        Muxes := 5     
+	   4 Input 1024 Bit        Muxes := 1     
+	  16 Input   64 Bit        Muxes := 36    
+	   2 Input   64 Bit        Muxes := 272   
+	   4 Input   64 Bit        Muxes := 7     
+	   3 Input   64 Bit        Muxes := 39    
+	   6 Input   64 Bit        Muxes := 1     
+	  16 Input   56 Bit        Muxes := 2     
+	  16 Input   53 Bit        Muxes := 2     
+	   2 Input   53 Bit        Muxes := 2     
+	  16 Input   48 Bit        Muxes := 2     
+	  16 Input   40 Bit        Muxes := 2     
+	   2 Input   32 Bit        Muxes := 20    
+	   6 Input   32 Bit        Muxes := 6     
+	   3 Input   32 Bit        Muxes := 4     
+	  16 Input   32 Bit        Muxes := 2     
+	   4 Input   32 Bit        Muxes := 2     
+	  16 Input   24 Bit        Muxes := 2     
+	  16 Input   16 Bit        Muxes := 2     
+	   3 Input   12 Bit        Muxes := 1     
+	   2 Input   12 Bit        Muxes := 1     
+	   2 Input   11 Bit        Muxes := 1     
+	   2 Input   10 Bit        Muxes := 3     
+	  16 Input    8 Bit        Muxes := 2     
+	   2 Input    8 Bit        Muxes := 70    
+	   3 Input    8 Bit        Muxes := 1     
+	   2 Input    6 Bit        Muxes := 3     
+	   4 Input    5 Bit        Muxes := 1     
+	   6 Input    5 Bit        Muxes := 2     
+	   2 Input    5 Bit        Muxes := 1     
+	   2 Input    4 Bit        Muxes := 6     
+	   3 Input    4 Bit        Muxes := 5     
+	   4 Input    4 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 14    
+	   3 Input    3 Bit        Muxes := 2     
+	   5 Input    3 Bit        Muxes := 2     
+	   4 Input    3 Bit        Muxes := 2     
+	   8 Input    3 Bit        Muxes := 1     
+	   4 Input    2 Bit        Muxes := 2     
+	   2 Input    2 Bit        Muxes := 11    
+	   3 Input    2 Bit        Muxes := 5     
+	   2 Input    1 Bit        Muxes := 178   
+	   3 Input    1 Bit        Muxes := 33    
+	  16 Input    1 Bit        Muxes := 2     
+	   4 Input    1 Bit        Muxes := 26    
+	   6 Input    1 Bit        Muxes := 4     
+	   7 Input    1 Bit        Muxes := 4     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 80 (col length:40)
+BRAMs: 90 (col length: RAMB18 40 RAMB36 20)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[6] driven by constant 0
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[5] driven by constant 0
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[4] driven by constant 0
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[3] driven by constant 0
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[2] driven by constant 0
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[1] driven by constant 0
+WARNING: [Synth 8-3917] design memory_with_bram_cache has port memory_access_out\.req_addr[0] driven by constant 0
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][0]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][1]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][2]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][3]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][4]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][5]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][6]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][7]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][8]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][9]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][10]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][11]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][12]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][13]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][14]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][15]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][16]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][17]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][18]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][19]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][20]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][21]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][22]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][23]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][24]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][25]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][26]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][27]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][28]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][29]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][30]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][31]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][32]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][33]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][34]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][35]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][36]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][37]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][38]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][39]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][40]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][41]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][42]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][43]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][44]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][45]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][46]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][47]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][48]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][49]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][50]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][51]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][52]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][53]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][54]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][55]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][56]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][57]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][58]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][59]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][60]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][61]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][62]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_memory_reg[1][0][63]' (FDRE) to 'cache_tags_reg[1][0]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][0]' (FDRE) to 'cache_tags_reg[1][1]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][1]' (FDRE) to 'cache_tags_reg[1][2]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][2]' (FDRE) to 'cache_tags_reg[1][3]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][3]' (FDRE) to 'cache_tags_reg[1][4]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][4]' (FDRE) to 'cache_tags_reg[1][5]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][5]' (FDRE) to 'cache_tags_reg[1][6]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][6]' (FDRE) to 'cache_tags_reg[1][7]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][7]' (FDRE) to 'cache_tags_reg[1][8]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][8]' (FDRE) to 'cache_tags_reg[1][9]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][9]' (FDRE) to 'cache_tags_reg[1][10]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][10]' (FDRE) to 'cache_tags_reg[1][11]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][11]' (FDRE) to 'cache_tags_reg[1][12]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][12]' (FDRE) to 'cache_tags_reg[1][13]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][13]' (FDRE) to 'cache_tags_reg[1][14]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][14]' (FDRE) to 'cache_tags_reg[1][15]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][15]' (FDRE) to 'cache_tags_reg[1][16]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][16]' (FDRE) to 'cache_tags_reg[1][17]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][17]' (FDRE) to 'cache_tags_reg[1][18]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][18]' (FDRE) to 'cache_tags_reg[1][19]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][19]' (FDRE) to 'cache_tags_reg[1][20]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][20]' (FDRE) to 'cache_tags_reg[1][21]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][21]' (FDRE) to 'cache_tags_reg[1][22]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][22]' (FDRE) to 'cache_tags_reg[1][23]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][23]' (FDRE) to 'cache_tags_reg[1][24]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][24]' (FDRE) to 'cache_tags_reg[1][25]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][25]' (FDRE) to 'cache_tags_reg[1][26]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][26]' (FDRE) to 'cache_tags_reg[1][27]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][27]' (FDRE) to 'cache_tags_reg[1][28]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][28]' (FDRE) to 'cache_tags_reg[1][29]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][29]' (FDRE) to 'cache_tags_reg[1][30]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][30]' (FDRE) to 'cache_tags_reg[1][31]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][31]' (FDRE) to 'cache_tags_reg[1][32]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][32]' (FDRE) to 'cache_tags_reg[1][33]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][33]' (FDRE) to 'cache_tags_reg[1][34]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][34]' (FDRE) to 'cache_tags_reg[1][35]'
+INFO: [Synth 8-3886] merging instance 'cache_tags_reg[1][35]' (FDRE) to 'cache_tags_reg[1][36]'
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\retrieved_tag_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\effective_state_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\cache_tags_reg[0][2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\replaced_tag_reg[52] )
+WARNING: [Synth 8-3332] Sequential element (effective_state_reg[3]) is unused and will be removed from module memory_with_bram_cache.
+WARNING: [Synth 8-5402] Detected an instance with large pin count 1049610
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\reader_state_d_reg[31] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (write_buffer_pointer0_inferred/\write_buffer_pointer_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (write_buffer_pointer0_inferred/\write_buffer_pointer_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (write_buffer_pointer0_inferred/\write_buffer_pointer_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (write_buffer_pointer0_inferred/\write_buffer_pointer_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (write_buffer_pointer0_inferred/\write_buffer_pointer_reg[4] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (write_buffer_pointer0_inferred/\write_buffer_pointer_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\reader_state_q_reg[31] )
+INFO: [Synth 8-5546] ROM "OPCODE_TO_TYPE" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT3_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT7_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT7_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "FUNCT7_FROM_BITS" won't be mapped to RAM because it is too sparse
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (register_table/\register_storage_reg[0][63] )
+WARNING: [Synth 8-3917] design tp_lvl__GCB1 has port if_memory_interface\.rready driven by constant 1
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\main_memory/read_slv\.rresp_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\main_memory/write_slv\.bresp_reg[1] )
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:14 ; elapsed = 00:02:38 . Memory (MB): peak = 4212.777 ; gain = 2161.828 ; free physical = 286 ; free virtual = 1331
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping Report (see note below)
++-------------+--------------------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name  | RTL Object                                 | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++-------------+--------------------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|tp_lvl__GCB1 | main_memory/generate_blocks[0].mem_blk_reg | 512 x 64(READ_FIRST)   | W |   | 512 x 64(WRITE_FIRST)  |   | R | Port A and B     | 0      | 1      | 
++-------------+--------------------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:03:18 ; elapsed = 00:02:51 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2677 ; free virtual = 3827
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:03:58 ; elapsed = 00:03:31 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2668 ; free virtual = 3825
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping Report
++-------------+--------------------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name  | RTL Object                                 | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++-------------+--------------------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|tp_lvl__GCB1 | main_memory/generate_blocks[0].mem_blk_reg | 512 x 64(READ_FIRST)   | W |   | 512 x 64(WRITE_FIRST)  |   | R | Port A and B     | 0      | 1      | 
++-------------+--------------------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_8 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_9 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_10 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_11 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_12 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_15 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_16 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_17 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_18 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_19 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_20 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_21 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_22 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_23 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_24 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_25 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_26 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_27 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uarti_3/write_buffer_pointer_reg_rep_28 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_0/main_memory/generate_blocks[0].mem_blk_reg (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:04:01 ; elapsed = 00:03:46 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2466 ; free virtual = 3624
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_8 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_9 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_10 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_11 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_12 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_15 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_16 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_17 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_18 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_19 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_20 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_21 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_22 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_23 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_24 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_25 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_26 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_27 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance uart/write_buffer_pointer_reg_rep_28 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/generate_blocks[0].mem_blk_reg (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:04:06 ; elapsed = 00:03:53 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:04:06 ; elapsed = 00:03:53 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:04:08 ; elapsed = 00:03:55 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:04:08 ; elapsed = 00:03:55 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:04:09 ; elapsed = 00:03:55 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:04:09 ; elapsed = 00:03:55 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |BUFG     |     3|
+|2     |CARRY4   |   194|
+|3     |LUT1     |   114|
+|4     |LUT2     |  2320|
+|5     |LUT3     |   759|
+|6     |LUT4     |  5690|
+|7     |LUT5     |   729|
+|8     |LUT6     |  5936|
+|9     |MUXF7    |   550|
+|10    |MUXF8    |   171|
+|11    |RAMB18E1 |     1|
+|12    |RAMB36E1 |    29|
+|41    |FDRE     | 13399|
+|42    |FDSE     |    27|
+|43    |LD       |    90|
+|44    |LDCP     |     1|
+|45    |IBUF     |     3|
+|46    |OBUF     |     1|
++------+---------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:04:09 ; elapsed = 00:03:55 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 2402 ; free virtual = 3629
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 338 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:03:50 ; elapsed = 00:03:41 . Memory (MB): peak = 4244.312 ; gain = 1055.020 ; free physical = 8733 ; free virtual = 9960
+Synthesis Optimization Complete : Time (s): cpu = 00:04:09 ; elapsed = 00:03:58 . Memory (MB): peak = 4244.312 ; gain = 2193.363 ; free physical = 8740 ; free virtual = 9960
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00.25 ; elapsed = 00:00:00.25 . Memory (MB): peak = 4244.312 ; gain = 0.000 ; free physical = 8741 ; free virtual = 9961
+INFO: [Netlist 29-17] Analyzing 1036 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/shared/DebianVMSharedDirectory/CPU2/vivado/constraints.xdc]
+Finished Parsing XDC File [/shared/DebianVMSharedDirectory/CPU2/vivado/constraints.xdc]
+INFO: [Opt 31-138] Pushed 1 inverter(s) to 5 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8776 ; free virtual = 9998
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 91 instances were transformed.
+  LD => LDCE: 85 instances
+  LD => LDCE (inverted pins: G): 5 instances
+  LDCP => LDCP (GND, LDCE, LUT3(x2), VCC): 1 instance 
+
+Synth Design complete | Checksum: 4bf637fa
+INFO: [Common 17-83] Releasing license: Synthesis
+305 Infos, 318 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:04:18 ; elapsed = 00:04:08 . Memory (MB): peak = 4276.480 ; gain = 2379.715 ; free physical = 8783 ; free virtual = 10005
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 11813.210; main = 3296.261; forked = 8935.193
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 23313.512; main = 4232.969; forked = 19104.645
+
+Largest pin-count instance: 3257 pins on if_data_multiplexer (bulk_read_multiplexer)
+First ~50 pins on the worst offender:
+  if_data_multiplexer/ADDRBWRADDR[0]
+  if_data_multiplexer/ADDRBWRADDR[1]
+  if_data_multiplexer/ADDRBWRADDR[2]
+  if_data_multiplexer/ADDRBWRADDR[3]
+  if_data_multiplexer/ADDRBWRADDR[4]
+  if_data_multiplexer/CO[0]
+  if_data_multiplexer/D[0]
+  if_data_multiplexer/FSM_onehot_current_state_reg[0]
+  if_data_multiplexer/FSM_onehot_current_state_reg[0]_0
+  if_data_multiplexer/Q[0]
+  if_data_multiplexer/Q[1]
+  if_data_multiplexer/Q[2]
+  if_data_multiplexer/SR[0]
+  if_data_multiplexer/araddr_next_reg[10]_i_1[0]
+  if_data_multiplexer/araddr_next_reg[10]_i_1[1]
+  if_data_multiplexer/buffer_valid
+  if_data_multiplexer/buffer_valid_reg_0
+  if_data_multiplexer/clk_IBUF_BUFG
+  if_data_multiplexer/currently_serving_if
+  if_data_multiplexer/data_bulk_handle\\.dumping_cache
+  if_data_multiplexer/data_bulk_handle\\.req_valid
+  if_data_multiplexer/data_bulk_handle\\.req_write
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_0
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_1
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_10
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_11
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_12
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_13
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_14
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_15
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_16
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_17
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_18
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_19
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_2
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_20
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_21
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_22
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_23
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_24
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_25
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_26
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_27
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_28
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_29
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_3
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_30
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_31
+  if_data_multiplexer/generate_blocks[0].mem_blk_reg_32
+Property          Type    Read-only  Value
+CLASS             string  true       cell
+FILE_NAME         string  true       /shared/DebianVMSharedDirectory/CPU2/rtl/tp_lvl.sv
+IS_BLACKBOX       bool    true       0
+IS_BOUNDARY_INST  bool    true       0
+IS_DEBUGGABLE     bool    true       0
+IS_ENCRYPTED      bool    true       0
+IS_MATCHED        bool    true       0
+IS_ORIG_CELL      bool    true       1
+IS_PRIMITIVE      bool    true       0
+IS_REUSED         bool    true       0
+IS_SEQUENTIAL     bool    true       0
+LINE_NUMBER       int     true       68
+NAME              string  true       if_data_multiplexer
+ORIG_REF_NAME     string  true       bulk_read_multiplexer
+PRIMITIVE_COUNT   int     true       2153
+REF_NAME          string  true       bulk_read_multiplexer
+REUSE_STATUS      enum    true       
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Wrote PlaceDB: Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.17 ; elapsed = 00:00:00.07 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+Wrote Device Cache: Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+Write Physdb Complete: Time (s): cpu = 00:00:00.2 ; elapsed = 00:00:00.08 . Memory (MB): peak = 4276.480 ; gain = 0.000 ; free physical = 8783 ; free virtual = 10006
+INFO: [Common 17-1381] The checkpoint '/shared/DebianVMSharedDirectory/CPU2/vivado/build/synth.dcp' has been generated.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+report_timing_summary: Time (s): cpu = 00:00:13 ; elapsed = 00:00:10 . Memory (MB): peak = 4300.086 ; gain = 23.605 ; free physical = 8705 ; free virtual = 9996
+INFO: [Common 17-206] Exiting Vivado at Sun Sep 28 18:42:25 2025...

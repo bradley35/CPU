@@ -61,7 +61,7 @@ module memoryrw (
 
   assign assert_stall = !accepting_alu_result;
   //LOGIC: Whatever is in the ALU out flip-flop is what we are currently working on (have accepted)
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     result_q                <= ex_is_mem_addr_q ? trunc_result_next : raw_result_next;
     result_valid_q          <= result_valid_d;
     result_is_branch_addr_q <= ex_is_branch_addr_q;

@@ -36,4 +36,5 @@ module bram_over_axi_tb (
     .memory_access_out(bulk_interface.master),
     .dump_cache       ()
   );
+
 endmodule

@@ -1,4 +1,7 @@
-module bulk_read_to_axi_adapter (
+module bulk_read_to_axi_adapter #(
+  parameter logic [7:0] LINE_SIZE = 16,
+  parameter int         DATA_W    = 64
+) (
         bulk_read_interface.slave bulk_read_in,
         axi_interface_if.rd_mst   axi_read_out,
         axi_interface_if.wr_mst   axi_write_out,
@@ -13,18 +16,18 @@ module bulk_read_to_axi_adapter (
     AD_WRITE
   } state_t;
 
-  state_t                                        current_state;
-  state_t                                        next_state;
+  state_t                           current_state;
+  state_t                           next_state;
 
-  logic   [$clog2(bulk_read_in.LINE_SIZE)-1 : 0] current_beat;
-  logic   [$clog2(bulk_read_in.LINE_SIZE)-1 : 0] next_beat;
+  logic   [$clog2(LINE_SIZE)-1 : 0] current_beat;
+  logic   [$clog2(LINE_SIZE)-1 : 0] next_beat;
 
-  logic   [             bulk_read_in.DATA_W-1:0] read_write_buffer[bulk_read_in.LINE_SIZE];
-  logic   [           bulk_read_in.DATA_W/8-1:0] wstrb_buffer     [bulk_read_in.LINE_SIZE];
+  logic   [             DATA_W-1:0] read_write_buffer[LINE_SIZE];
+  logic   [           DATA_W/8-1:0] wstrb_buffer     [LINE_SIZE];
 
 
   assign bulk_read_in.resp_rdata = read_write_buffer;
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       current_state     <= AD_IDLE;
       current_beat      <= 0;
@@ -103,7 +106,7 @@ module bulk_read_to_axi_adapter (
             axi_read_out.arvalid  = 1;
             axi_read_out.arid     = 1;
             axi_read_out.araddr   = bulk_read_in.req_addr;
-            axi_read_out.arlen    = bulk_read_in.LINE_SIZE - 1;
+            axi_read_out.arlen    = LINE_SIZE - 1;
             axi_read_out.arsize   = 3;
             //INCR
             axi_read_out.arburst  = 'b11;
@@ -117,7 +120,7 @@ module bulk_read_to_axi_adapter (
             axi_write_out.awvalid  = 1;
             axi_write_out.awid     = 1;
             axi_write_out.awaddr   = bulk_read_in.req_addr;
-            axi_write_out.awlen    = bulk_read_in.LINE_SIZE - 1;
+            axi_write_out.awlen    = LINE_SIZE - 1;
             axi_write_out.awsize   = 3;
             axi_write_out.awburst  = 'b11;
             axi_write_out.awlock   = '0;
@@ -149,8 +152,7 @@ module bulk_read_to_axi_adapter (
         axi_write_out.wdata    = read_write_buffer[current_beat];
         axi_write_out.wstrb    = wstrb_buffer[current_beat];
         //Note that we could theoretically accept a request here (when the next_state would be idle), but that adds complexity
-        if (next_beat == ($clog2(bulk_read_in.LINE_SIZE))'(bulk_read_in.LINE_SIZE))
-          next_state = AD_IDLE;
+        if (next_beat == ($clog2(LINE_SIZE))'(LINE_SIZE)) next_state = AD_IDLE;
         else next_state = AD_WRITE;
       end
     endcase

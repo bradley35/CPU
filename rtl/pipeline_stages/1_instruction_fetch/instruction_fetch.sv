@@ -44,7 +44,7 @@ module instruction_fetch (
   assign instruction_d                 = mem_rd.rdata;
 
   /* Sequential Logic */
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       output_valid <= 0;
     end else if (!stall) begin

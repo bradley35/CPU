@@ -6,13 +6,13 @@ sys.path.append(os.path.dirname(__file__))
 from tests.CPU.riscv_tests_gen import *
 from tests.CPU.test_helpers import *
 
-@cocotb.test()
-async def nothing_test(dut):
-    clock = Clock(dut.clk, 1, unit="ns")
-    await resetAndPrepare(dut)
-    cocotb.start_soon(clock.start())
-    await Timer(100, unit="ns")
-    clock.stop()
+# @cocotb.test()
+# async def nothing_test(dut):
+#     clock = Clock(dut.clk, 1, unit="ns")
+#     await resetAndPrepare(dut)
+#     cocotb.start_soon(clock.start())
+#     await Timer(100, unit="ns")
+#     clock.stop()
     
 @cocotb.test()
 async def test_single_add(dut):

@@ -1,12 +1,18 @@
 module tp_lvl (
   input  logic clk,
-  input  logic rst,
+  input  logic reset_pin,
   input  logic rx,
   output logic tx
 );
 
   import instruction_decode_types::*;
-
+  logic rst;
+  //Board has active-low reset
+`ifdef VIVADO
+  assign rst = !reset_pin;
+`else
+  assign rst = reset_pin;
+`endif
   logic             program_complete;
 
   logic             pc_if_write_en;
@@ -117,7 +123,7 @@ module tp_lvl (
   //Remove the thirty-two bit flip
   assign if_memory_interface.araddr = x32_bit_if_memory_interface.araddr & 64'b1111111111111111111111111111111111111111111111111111111111111011;
   logic requested_bit;
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     //We need to ff the mem_addr
     requested_bit <= x32_bit_if_memory_interface.araddr[2];
   end
@@ -129,7 +135,26 @@ module tp_lvl (
   assign if_memory_interface.wvalid = 0;
   assign if_memory_interface.rready = x32_bit_if_memory_interface.rready;
 
+  /* Connections */
+  logic        decode_stage_stall_out;
+  logic        execute_stage_stall_out;
+  logic        memory_stage_stall_out;
 
+  logic [63:0] execute_stage_result_q;
+  logic [ 4:0] execute_stage_rd_out_q;
+  logic        execute_stage_write_to_rd_out_q;
+  logic        execute_stage_result_is_valid_q;
+  logic        execute_stage_result_is_memory_addr_q;
+
+  logic [63:0] memory_stage_result_q;
+  logic        memory_stage_result_valid_d;
+  logic [ 4:0] memory_stage_rd_q;
+  logic        memory_stage_write_to_rd_q;
+  logic        memory_stage_result_valid_q;
+
+  logic [63:0] writeback_register_value_to_write_reg;
+  logic [63:0] writeback_wb_buffer_1;
+  logic [63:0] writeback_wb_buffer_2;
 
   //Step 1: Fetch Instruction
   instruction_fetch fetch_stage (
@@ -143,11 +168,11 @@ module tp_lvl (
     .instruction   (),
     .instruction_pc(),
     .mem_rd        (x32_bit_if_memory_interface.rd_mst),
-    .stall         (decode_stage.stall_out),
+    .stall         (decode_stage_stall_out),
     .branch_hazard (branch_invalidate)
   );
 
-  //Step 2: Decode + Register Reading
+  // //Step 2: Decode + Register Reading
 
 
   instruction_decode decode_stage (
@@ -158,13 +183,13 @@ module tp_lvl (
     .instruction_pc (fetch_stage.instruction_pc),
 
 
-    .mem_input_rd(execute_stage.rd_out_q),
-    .mem_input_write_to_rd(execute_stage.write_to_rd_out_q && execute_stage.result_is_valid_q && !branch_invalidate),
-    .mem_input_is_mem_addr(execute_stage.result_is_memory_addr_q),
-    .mem_output_valid_d(memory_stage.result_valid_d && !branch_invalidate),
+    .mem_input_rd(execute_stage_rd_out_q),
+    .mem_input_write_to_rd(execute_stage_write_to_rd_out_q && execute_stage_result_is_valid_q && !branch_invalidate),
+    .mem_input_is_mem_addr(execute_stage_result_is_memory_addr_q),
+    .mem_output_valid_d(memory_stage_result_valid_d && !branch_invalidate),
 
-    .wb_input_rd(memory_stage.rd_q),
-    .wb_input_write_to_rd(memory_stage.write_to_rd_q && memory_stage.result_valid_q && !branch_invalidate),
+    .wb_input_rd(memory_stage_rd_q),
+    .wb_input_write_to_rd(memory_stage_write_to_rd_q && memory_stage_result_valid_q && !branch_invalidate),
 
     .output_valid(),
     .ex_op_1     (),
@@ -186,30 +211,32 @@ module tp_lvl (
 
 
     //Stall bit
-    .stall_in (execute_stage.stall_out),
-    .stall_out(),
+    .stall_in (execute_stage_stall_out),
+    .stall_out(decode_stage_stall_out),
 
     //Register Access
     .register_access(register_table.full_table)
   );
 
   //Step3: ALU
+`ifndef VIVADO
   typedef logic [63:0] double_word;
+`endif
   double_word operand_1;
   double_word operand_2;
   always_comb begin
     case (decode_stage.operand_1_fwd)
-      ALU:     operand_1 = execute_stage.result_q;
-      MEM:     operand_1 = memory_stage.result_q;
-      WB:      operand_1 = writeback.register_value_to_write_reg;
-      WB_BUF:  operand_1 = writeback.wb_buffer_1;
+      ALU:     operand_1 = execute_stage_result_q;
+      MEM:     operand_1 = memory_stage_result_q;
+      WB:      operand_1 = writeback_register_value_to_write_reg;
+      WB_BUF:  operand_1 = writeback_wb_buffer_1;
       default: operand_1 = decode_stage.ex_op_1;
     endcase
     case (decode_stage.operand_2_fwd)
-      ALU:     operand_2 = execute_stage.result_q;
-      MEM:     operand_2 = memory_stage.result_q;
-      WB:      operand_2 = writeback.register_value_to_write_reg;
-      WB_BUF:  operand_2 = writeback.wb_buffer_2;
+      ALU:     operand_2 = execute_stage_result_q;
+      MEM:     operand_2 = memory_stage_result_q;
+      WB:      operand_2 = writeback_register_value_to_write_reg;
+      WB_BUF:  operand_2 = writeback_wb_buffer_2;
       default: operand_2 = decode_stage.ex_op_2;
     endcase
   end
@@ -253,24 +280,23 @@ module tp_lvl (
 
 
     /* Latched outputs */
-    .rd_out_q                     (),
-    .result_q                     (),
-    .write_to_rd_out_q            (),
+    .rd_out_q                     (execute_stage_rd_out_q),
+    .result_q                     (execute_stage_result_q),
+    .write_to_rd_out_q            (execute_stage_write_to_rd_out_q),
     .result_is_branch_addr_q      (),
-    .result_is_valid_q            (),
+    .result_is_valid_q            (execute_stage_result_is_valid_q),
     .operand_2_pt_q               (),
-    .result_is_memory_addr_q      (),
+    .result_is_memory_addr_q      (execute_stage_result_is_memory_addr_q),
     .out_memory_addr_is_write_q   (),
     .result_is_final_instruction_q(),
     .load_store_variant_out_q     (),
 
 
     //Stall bit
-    .stall_in (memory_stage.assert_stall),
-    .stall_out()
+    .stall_in (memory_stage_stall_out),
+    .stall_out(execute_stage_stall_out)
 
   );
-
 
 
 
@@ -302,18 +328,18 @@ module tp_lvl (
     .ex_load_store_variant_d(execute_stage.load_store_variant_out_d),
 
     .branch_invalidate(branch_invalidate),
-    .assert_stall     (),
+    .assert_stall     (memory_stage_stall_out),
     .mem_rd           (data_controlled_interface.rd_mst),
     .mem_wr           (data_controlled_interface.wr_mst),
 
-    .result_q(),
+    .result_q(memory_stage_result_q),
 
-    .result_valid_q(),
-    .result_valid_d(),
+    .result_valid_q(memory_stage_result_valid_q),
+    .result_valid_d(memory_stage_result_valid_d),
 
     .result_is_branch_addr_q(),
-    .write_to_rd_q          (),
-    .rd_q                   (),
+    .write_to_rd_q          (memory_stage_write_to_rd_q),
+    .rd_q                   (memory_stage_rd_q),
     .should_end_program_q   (),
     .dump_cache
   );
@@ -333,14 +359,14 @@ module tp_lvl (
     .register_write_en          (reg_w_enable),
     .register_to_write          (reg_write_entry),
     .register_value_to_write    (reg_write_value),
-    .register_value_to_write_reg(),
+    .register_value_to_write_reg(writeback_register_value_to_write_reg),
 
     .pc_write_en       (override_pc_write_en),
     .pc_write          (override_pc_write),
     .should_end_program(memory_stage.should_end_program_q),
     .done_executing    (program_complete),
-    .wb_buffer_1       (),
-    .wb_buffer_2       (),
+    .wb_buffer_1       (writeback_wb_buffer_1),
+    .wb_buffer_2       (writeback_wb_buffer_2),
     .override_buff_1   (decode_stage.operand_1_fwd == WB),
     .override_buff_2   (decode_stage.operand_2_fwd == WB)
   );

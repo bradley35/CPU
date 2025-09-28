@@ -34,7 +34,7 @@ module execute (
 
 
   /* Latched outputs */
-  output                      [4:0] rd_out_q,
+  output logic                [4:0] rd_out_q,
   output double_word                result_q,
   output logic                      write_to_rd_out_q,
   output logic                      result_is_branch_addr_q,
@@ -63,7 +63,7 @@ module execute (
   assign out_memory_addr_is_write_d    = memory_addr_is_write;
   assign result_is_final_instruction_d = is_final_instruction;
 
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       result_is_valid_q <= 0;
     end else if (!stall_in) begin

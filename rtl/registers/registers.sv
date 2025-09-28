@@ -1,3 +1,7 @@
+`ifdef VIVADO
+import registers_types::*;
+`endif
+
 module registers (
   input logic             clk,
   input logic             rst,
@@ -14,7 +18,9 @@ module registers (
 
 );
 
+`ifndef VIVADO
   import registers_types::*;
+`endif
 
 
   double_word register_storage[32];
@@ -22,7 +28,7 @@ module registers (
 
   assign full_table = '{x_regs: register_storage, pc: pc_storage};
 
-  always_ff @(posedge clk, posedge rst) begin : reg_loop
+  always_ff @(posedge clk) begin : reg_loop
     if (rst) begin
       register_storage <= '{default: '0};
       pc_storage       <= '0;

@@ -28,7 +28,7 @@ module memory_controller (
   logic        read_response_accepted_d;
   logic        read_response_accepted_q;
 
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       read_response_accepted_q <= 1'b1;
       rd_current_connect       <= CACHE;
@@ -95,7 +95,7 @@ module memory_controller (
   logic        write_response_accepted_d;
   logic        write_response_accepted_q;
 
-  always_ff @(posedge clk, posedge rst) begin
+  always_ff @(posedge clk) begin
     if (rst) begin
       write_response_accepted_q <= 1'b1;
       wr_current_connect        <= CACHE;
