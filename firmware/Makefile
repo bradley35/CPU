@@ -16,8 +16,11 @@ CFLAGS  := -Wall -O2 -march=rv64i_zifencei -mabi=lp64 \
 # Linker script
 LDSCRIPT := linker_script.ld
 
-# Bare-metal link flags: no crt, no libc; use your script; also emit a map file
+# Bare-metal link flags: no crt, use libc; use your script; also emit a map file
 LDFLAGS := -nostartfiles -nostdlib -Wl,-T,$(LDSCRIPT)
+LDFLAGS := -nostartfiles -nostdlib -Wl,-T,$(LDSCRIPT),--gc-sections
+
+LIBS := -lgcc
 
 # Project structure
 BUILD := build
@@ -39,8 +42,7 @@ $(BUILD)/.chunks.stamp: $(BUILD)/app.bin | $(BUILD)
 
 # Link rule
 $(BUILD)/app.elf: $(OBJS) $(LDSCRIPT) | $(BUILD)
-	$(LD) $(OBJS) $(STARTUP) $(LDFLAGS) -o $@
-
+	$(LD) $(OBJS) $(STARTUP) $(LDFLAGS) $(LIBS) -o $@
 # Output flat binary
 $(BUILD)/app.bin: $(BUILD)/app.elf
 	$(OBJCOPY) -O binary $< $@
