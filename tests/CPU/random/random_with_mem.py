@@ -76,16 +76,6 @@ def rand_offset_within_window(base, width_bytes, max_words=64):
 # -------------------------
 # DUT helpers
 # -------------------------
-async def resetAndPrepare(dut):
-    dut.rst.value = 1
-    await ReadWrite()
-    clock = Clock(dut.clk, 1, unit="ns")
-    cocotb.start_soon(clock.start())
-    await Timer(10, unit="ns")
-    await ReadWrite()
-    dut.rst.value = 0
-    clock.stop()
-    await ReadWrite()
 
 
 
@@ -483,8 +473,8 @@ async def test_randomized_memory_fuzz(dut):
         ref.seed_code(compiled)
 
         dut._log.info(asm)
-        await resetAndPrepare(dut)
         loadCompiledToMemory(compiled, dut)
+        await resetAndPrepare(dut)
 
         await ReadWrite()
         clock = Clock(dut.clk, 1, unit="ns")

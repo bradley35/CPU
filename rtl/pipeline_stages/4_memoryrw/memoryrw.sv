@@ -35,7 +35,8 @@ module memoryrw (
 
   /* Branch Invalidate PT */
 
-  input logic branch_invalidate,
+  input  logic should_reset_branch_in,
+  output logic should_reset_branch_out,
 
   /* Stall Chain */
   output logic assert_stall,
@@ -62,15 +63,20 @@ module memoryrw (
   assign assert_stall = !accepting_alu_result;
   //LOGIC: Whatever is in the ALU out flip-flop is what we are currently working on (have accepted)
   always_ff @(posedge clk) begin
-    result_q                <= ex_is_mem_addr_q ? trunc_result_next : raw_result_next;
-    result_valid_q          <= result_valid_d;
-    result_is_branch_addr_q <= ex_is_branch_addr_q;
-    write_to_rd_q           <= ex_write_to_rd_q;
-    rd_q                    <= ex_rd_q;
-    should_end_program_q    <= ex_should_end_program_q;
-
-    //If the AW was accepted without the W, we need to remember
-    previous_aw_accept      <= mem_wr.wready ? (previous_aw_accept | mem_wr.awready) : 0;
+    if (rst) begin
+      result_valid_q          <= 0;
+      should_reset_branch_out <= 0;
+    end else begin
+      result_q                <= ex_is_mem_addr_q ? trunc_result_next : raw_result_next;
+      result_valid_q          <= result_valid_d;
+      result_is_branch_addr_q <= ex_is_branch_addr_q;
+      write_to_rd_q           <= ex_write_to_rd_q;
+      rd_q                    <= ex_rd_q;
+      should_end_program_q    <= ex_should_end_program_q;
+      should_reset_branch_out <= should_reset_branch_in && result_valid_d;
+      //If the AW was accepted without the W, we need to remember
+      previous_aw_accept      <= mem_wr.wready ? (previous_aw_accept | mem_wr.awready) : 0;
+    end
   end
 
 

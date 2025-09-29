@@ -19,15 +19,44 @@ async def test_single_add(dut):
     # Load add into memory
     asm = """
     add   x3, x1, x2
+    add   x3, x1, x2
+    add   x3, x1, x2
+    add   x3, x1, x2
+    add   x3, x1, x2
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 1535, 8462, 5473, 9], dut)
-    cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
+    clock = Clock(dut.clk, 1, unit="ns")
+    cocotb.start_soon(clock.start())
     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
     checkRegister(3, 1535 + 8462, dut)
     checkFinished(dut)
+    clock.stop()
+
+# @cocotb.test()
+# async def double_test(dut):
+#     # Load add into memory
+#     asm = """
+#     add   x3, x1, x2
+#     ecall
+#     """
+#     loadAsmToMemory(asm, dut)
+#     await resetAndPrepare(dut)
+#     loadRegisters([0, 1535, 8462, 5473, 9], dut)
+#     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
+#     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
+#     checkRegister(3, 1535 + 8462, dut)
+#     checkFinished(dut)
+#     loadAsmToMemory(asm, dut)
+
+#     await resetAndPrepare(dut)
+#     loadRegisters([0, 1535, 8462, 5473, 9], dut)
+#     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
+#     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
+#     checkRegister(3, 1535 + 8462, dut)
+#     checkFinished(dut)
 
 @cocotb.test()
 async def test_single_sub(dut):
@@ -36,12 +65,13 @@ async def test_single_sub(dut):
     sub   x3, x1, x2
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 1535, 8462, 5473, 9], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
-    await RisingEdge(dut.program_complete)
+    await First(RisingEdge(dut.program_complete), Timer(100, unit='ns'))
     checkRegister(3, 1535 - 8462, dut, True)
+    checkFinished(dut)
 
 @cocotb.test()
 async def test_single_add_imm(dut):
@@ -50,8 +80,8 @@ async def test_single_add_imm(dut):
     add x3, x1, 30
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 1535, 8462, 5473, 9], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
@@ -64,8 +94,8 @@ async def test_single_shift_imm_logical(dut):
     srl x3, x1, 1
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, -10, 8462, 5473, 9], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
@@ -78,8 +108,8 @@ async def test_single_shift_imm_arithmetic(dut):
    srai x3, x1, 1
    ecall
    """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, -10, 8462, 5473, 9], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
@@ -94,8 +124,8 @@ async def test_multiple_instruction_no_deps(dut):
     or x12, x3, x4
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 745628, 48392, -10, 10], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
@@ -116,8 +146,8 @@ async def test_multiple_instruction_far_deps(dut):
     add x11, x10, x10
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 745628, 48392, -10, 10], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
@@ -137,8 +167,8 @@ async def test_multiple_instruction_close_deps(dut):
     add x14, x1, 0
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 745628, 48392, -10, 10], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
@@ -165,8 +195,8 @@ async def test_big_immediate(dut):
     li x4, 0b1010101010101010101010101010101010101010101010101010101010101010
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     checkRegister(3, 0x7FFFF000, dut, False)
@@ -188,8 +218,8 @@ async def test_jump(dut):
     li x10, 12345
     jal x5, endo
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 3, 4, 111, 111], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
@@ -217,11 +247,17 @@ async def test_auipc(dut):
     nop
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
-    await RisingEdge(dut.program_complete)
+    await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
     checkRegister(3, 6*4+0x101000, dut, True)
+    checkFinished(dut)
+
+# @cocotb.test()
+# async def double_test2(dut):
+#     await test_jump(dut)
+#     await test_auipc(dut)
 
 @cocotb.test()
 async def test_jump_reg(dut):
@@ -239,8 +275,8 @@ async def test_jump_reg(dut):
     li x10, 12345
     jal x5, endo
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     checkRegister(10, 12345, dut, True)
@@ -309,10 +345,11 @@ AfterT5:
     ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
-    await RisingEdge(dut.program_complete)
+    await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
+    checkFinished(dut)
 
     # Expected: x21=1 (taken), x22=1 (not taken), x23=1 (taken), x24=1 (taken), x25=1 (not taken)
     checkRegister(21, 1, dut, True)
@@ -380,8 +417,8 @@ L_bgeu_after:
 
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
 
@@ -411,8 +448,8 @@ LoopStart:
     # x12 == 10 (sum 4+3+2+1)
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
 
@@ -500,8 +537,8 @@ H5_UNSIGNED_DONE:
 
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
 
@@ -559,8 +596,8 @@ LOOP:
     # Expect x22 = 3 (ran for 3 iterations)
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
 
@@ -583,8 +620,8 @@ target:
         addi  x7, x7, 3                   # executes exactly once
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(500, unit="ns"))
     checkFinished(dut)
@@ -598,8 +635,8 @@ async def test_ori(dut):
         ori x3, x1, 0b001
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(500, unit="ns"))
     checkFinished(dut)
@@ -616,8 +653,8 @@ async def test_addw(dut):
         addw x4, x1, x2
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     checkRegister(1, 8761733283840, dut, True)
@@ -636,8 +673,8 @@ async def test_srli_64bit(dut):
         srli x5, x4, 1            # Shift MSB right by 1
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     checkRegister(2, 0x0FFFFFFFFFFFFFFF, dut, False)  # Logical shift fills with 0s
@@ -656,8 +693,8 @@ async def test_srliw_32bit_truncation(dut):
         srliw x6, x5, 31          # Shift all the way to get 0 (positive MSB)
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     # SRLIW operates on lower 32 bits (0x12345678), shifts right by 4 -> 0x01234567
@@ -683,8 +720,8 @@ async def test_srai_64bit_arithmetic(dut):
         srai x7, x6, 1            # Arithmetic shift right by 1
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     # SRAI on negative number fills with 1s
@@ -709,8 +746,8 @@ async def test_sraiw_32bit_arithmetic_truncation(dut):
         sraiw x8, x7, 8           # Shift -1 right by 8 bits
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     # SRAIW on 0x80000000 (most negative 32-bit) >> 4 = 0xF8000000, sign extended to 0xFFFFFFFFF8000000
@@ -728,8 +765,8 @@ async def test_neg_one(dut):
         addi x13,x0,-1
         ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
 
@@ -750,8 +787,8 @@ TGT:
     li   x13, 1
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
     checkRegister(13, 1, dut, True)
@@ -774,8 +811,8 @@ TGT:
     li   x13, 1
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
     checkRegister(13, 1, dut, True)
@@ -825,8 +862,8 @@ nop
 
                                                                 ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
 
@@ -862,8 +899,8 @@ TGT_B:
     li   x13, 1
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
     checkRegister(13, 1, dut, True)   # final write should be 1
@@ -877,8 +914,8 @@ async def test_slli_imm_32(dut):
     slli x5, x5, 32     # requires 6-bit shamt on RV64; wrong decode -> shifts by 0
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
     # Expect 0x0000000100000000
@@ -943,8 +980,8 @@ async def test_li_64bit_constant_build(dut):
                                                         L_DONE_37_19:
                                                                 ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(500, unit="ns"))
     checkRegister(28, 0x66af0807d37d2cbb, dut, False)
@@ -958,8 +995,8 @@ async def test_load(dut):
     lw   x2, 1024(x0)
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Put a 64-bit value at byte address 1024.
     # 0x0000...0FF1 ensures both LD and LW read the same low value.
@@ -979,8 +1016,8 @@ async def test_use_after_load(dut):
     addi x1, x1, 50
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     await awrite_u64(dut, 1024, 0x0000000000000FF1)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
@@ -998,8 +1035,8 @@ async def test_multi_load(dut):
 
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     await awrite_u64(dut, 1024, 0x0000000000000FF1)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
@@ -1044,8 +1081,8 @@ async def test_load_variants_rv64i(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Little-endian pattern: 0xBEBA_CAFE_DEAD_BEEF laid out from BASE upward
     bytes_at_base = [0xEF, 0xBE, 0xAD, 0xDE, 0xFE, 0xCA, 0xBA, 0xBE]
@@ -1104,8 +1141,8 @@ async def test_store(dut):
 
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(500, unit="ns"))
     checkRegister(3,  12345, dut, False)
@@ -1120,8 +1157,8 @@ async def test_store2(dut):
         lhu  x5, 2(x31)
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
     checkRegister(5,  0xBEEF, dut, False)
@@ -1162,8 +1199,8 @@ async def test_edge_sign_zero_ext(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Memory map (little-endian):
     # +0:  0x80  -> LB = -128, LBU = 0x80
@@ -1242,8 +1279,8 @@ async def test_aligned_mixed_loads(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     for i in range(16):
         await awrite_u8(dut, BASE + i ,i)
@@ -1304,8 +1341,8 @@ async def test_store_then_load_width_mix(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Initialize surrounding bytes (so mixed-width overlaps are deterministic)
     for i in range(0, 32):
@@ -1362,8 +1399,8 @@ async def test_load_then_store_dep_single_program(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Place 0x1122334455667788 at BASE (little-endian)
     patt = [0x88,0x77,0x66,0x55,0x44,0x33,0x22,0x11]
@@ -1414,8 +1451,8 @@ async def test_branch_flush_cancels_store(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Original memory value to preserve if flush works:
     orig = [0xEF,0xBE,0xAD,0xDE,0xFE,0xCA,0xBA,0xBE]  # 0xBEBACAFEDEADBEEF
@@ -1450,8 +1487,8 @@ async def test_branch_not_taken_store_commits(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Initialize to something else
     for i,b in enumerate([0x00]*8):
@@ -1494,8 +1531,8 @@ async def test_branch_depends_on_load(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Set selector byte so that branch is NOT taken (x1 != 0)
     await awrite_u8(dut, BASE + 0, 0x01)
@@ -1537,8 +1574,8 @@ async def test_load_after_store_with_branch_misdir(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Initialize to something else before the store
     for i,b in enumerate([0x00]*8):
@@ -1580,8 +1617,8 @@ async def test_sw_lbu_endianness_and_strobes(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Pre-fill the 4 target bytes with a known nonzero pattern to catch missing strobes.
     for i, b in enumerate([0x11, 0x22, 0x33, 0x44]):
@@ -1626,8 +1663,8 @@ async def test_sw_pre_branch_not_taken(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     # Pre-fill bytes so a missing store shows up clearly.
     for i, b in enumerate([0xAA, 0xBB, 0xCC, 0xDD]):
@@ -2132,8 +2169,8 @@ async def crazy_test(dut):
                                                     
                                                                 ecall
                                                                 """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
 
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(1000, unit="ns"))
@@ -2210,8 +2247,8 @@ async def test_patch_two_after_current_with_fence(dut):
         ecall
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
 
     await First(RisingEdge(dut.program_complete), Timer(200, unit="ns"))
@@ -2264,8 +2301,8 @@ async def test_write_elsewhere_fence_and_jump(dut):
         .word 0x00000013                # addi x0, x0, 0 (nop)
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
 
     await First(RisingEdge(dut.program_complete), Timer(200, unit="ns"))
@@ -2318,8 +2355,8 @@ POST:
 
     """
 
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
 
     await First(RisingEdge(dut.program_complete), Timer(200, unit="ns"))
@@ -2337,8 +2374,8 @@ async def test_fence(dut):
     add   x3, x1, x2
     ecall
     """
-    await resetAndPrepare(dut)
     loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
     loadRegisters([0, 1535, 8462, 5473, 9], dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))

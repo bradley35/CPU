@@ -27,8 +27,7 @@ module tp_lvl (
 
   logic             dump_cache;
 
-  logic             branch_invalidate;
-  assign branch_invalidate = override_pc_write_en;
+  logic             branch_reset;
 
   registers register_table (
     .clk,
@@ -160,16 +159,17 @@ module tp_lvl (
   instruction_fetch fetch_stage (
     .clk,
     .rst,
-    .pc            (register_table.full_table.pc),
-    .pc_next       (register_table.pc_next),
+    .pc              (register_table.full_table.pc),
+    .pc_next         (register_table.pc_next),
     .pc_if_write_en,
     .pc_if_write,
-    .output_valid  (),
-    .instruction   (),
-    .instruction_pc(),
-    .mem_rd        (x32_bit_if_memory_interface.rd_mst),
-    .stall         (decode_stage_stall_out),
-    .branch_hazard (branch_invalidate)
+    .output_valid    (),
+    .instruction     (),
+    .instruction_pc  (),
+    .mem_rd          (x32_bit_if_memory_interface.rd_mst),
+    .stall           (decode_stage_stall_out),
+    .branch_reset_in (branch_reset),
+    .branch_reset_out()
   );
 
   // //Step 2: Decode + Register Reading
@@ -178,18 +178,18 @@ module tp_lvl (
   instruction_decode decode_stage (
     .clk,
     .rst,
-    .pc_output_valid(fetch_stage.output_valid && !branch_invalidate),
+    .pc_output_valid(fetch_stage.output_valid),
     .instruction    (fetch_stage.instruction),
     .instruction_pc (fetch_stage.instruction_pc),
 
 
-    .mem_input_rd(execute_stage_rd_out_q),
-    .mem_input_write_to_rd(execute_stage_write_to_rd_out_q && execute_stage_result_is_valid_q && !branch_invalidate),
+    .mem_input_rd         (execute_stage_rd_out_q),
+    .mem_input_write_to_rd(execute_stage_write_to_rd_out_q && execute_stage_result_is_valid_q),
     .mem_input_is_mem_addr(execute_stage_result_is_memory_addr_q),
-    .mem_output_valid_d(memory_stage_result_valid_d && !branch_invalidate),
+    .mem_output_valid_d   (memory_stage_result_valid_d),
 
-    .wb_input_rd(memory_stage_rd_q),
-    .wb_input_write_to_rd(memory_stage_write_to_rd_q && memory_stage_result_valid_q && !branch_invalidate),
+    .wb_input_rd         (memory_stage_rd_q),
+    .wb_input_write_to_rd(memory_stage_write_to_rd_q && memory_stage_result_valid_q),
 
     .output_valid(),
     .ex_op_1     (),
@@ -215,7 +215,9 @@ module tp_lvl (
     .stall_out(decode_stage_stall_out),
 
     //Register Access
-    .register_access(register_table.full_table)
+    .register_access(register_table.full_table),
+
+    .branch_reset(fetch_stage.branch_reset_out)
   );
 
   //Step3: ALU
@@ -249,7 +251,7 @@ module tp_lvl (
     .rst,
 
     /* Latched inputs from decode */
-    .input_valid                     (decode_stage.output_valid && !branch_invalidate),
+    .input_valid                     (decode_stage.output_valid),
     .thirty_two_bit_op               (decode_stage.thirty_two_bit_op),
     .ex_op_1                         (operand_1),
     .ex_op_2                         (operand_2),
@@ -291,6 +293,8 @@ module tp_lvl (
     .result_is_final_instruction_q(),
     .load_store_variant_out_q     (),
 
+    .should_reset_branch(),
+
 
     //Stall bit
     .stall_in (memory_stage_stall_out),
@@ -309,8 +313,8 @@ module tp_lvl (
 
     .ex_op_2_pt_d(execute_stage.operand_2_pt_d),
 
-    .ex_result_valid_q(execute_stage.result_is_valid_q && !branch_invalidate && !program_complete),
-    .ex_result_valid_d(execute_stage.result_is_valid_d && !branch_invalidate && !program_complete),
+    .ex_result_valid_q(execute_stage.result_is_valid_q && !program_complete),
+    .ex_result_valid_d(execute_stage.result_is_valid_d && !program_complete),
 
     .ex_is_branch_addr_q(execute_stage.result_is_branch_addr_q),
 
@@ -327,15 +331,17 @@ module tp_lvl (
     .ex_load_store_variant_q(execute_stage.load_store_variant_out_q),
     .ex_load_store_variant_d(execute_stage.load_store_variant_out_d),
 
-    .branch_invalidate(branch_invalidate),
-    .assert_stall     (memory_stage_stall_out),
-    .mem_rd           (data_controlled_interface.rd_mst),
-    .mem_wr           (data_controlled_interface.wr_mst),
+    .assert_stall(memory_stage_stall_out),
+    .mem_rd      (data_controlled_interface.rd_mst),
+    .mem_wr      (data_controlled_interface.wr_mst),
 
     .result_q(memory_stage_result_q),
 
     .result_valid_q(memory_stage_result_valid_q),
     .result_valid_d(memory_stage_result_valid_d),
+
+    .should_reset_branch_in (execute_stage.should_reset_branch),
+    .should_reset_branch_out(),
 
     .result_is_branch_addr_q(),
     .write_to_rd_q          (memory_stage_write_to_rd_q),
@@ -343,6 +349,7 @@ module tp_lvl (
     .should_end_program_q   (),
     .dump_cache
   );
+  assign branch_reset = memory_stage.should_reset_branch_out && memory_stage.result_valid_q;
 
   writeback_stage writeback (
     .clk,

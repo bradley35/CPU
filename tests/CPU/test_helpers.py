@@ -6,15 +6,18 @@ sys.path.append(os.path.dirname(__file__))
 from tests.CPU.riscv_tests_gen import *
 
 async def resetAndPrepare(dut):
-    dut.rst.value = 1
+    clock =Clock(dut.clk, 1, unit="ns")
+    cocotb.start_soon(clock.start())
+    dut.reset_pin.value = 1
+    # Hold reset for 5 clock cycles
+    for _ in range(5):
+        await RisingEdge(dut.clk)
+    dut.reset_pin.value = 0
+    clock.stop()
+    # Wait a cycle for reset to de-assert
+    #await RisingEdge(dut.clk)
     await ReadWrite()
-    dut.clk.value = 0
-    await ReadWrite()
-    dut.clk.value = 1
-    await ReadWrite()
-    dut.clk.value = 0
-    dut.rst.value = 0
-    await ReadWrite()
+    
 
 
 def _mem_params(dut):

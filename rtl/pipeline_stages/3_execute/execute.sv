@@ -44,7 +44,7 @@ module execute (
   output logic                      out_memory_addr_is_write_q,
   output logic                      result_is_final_instruction_q,
   output load_store_variant_e       load_store_variant_out_q,
-
+  output logic                      should_reset_branch,
 
   //Stall bit
   input  logic stall_in,
@@ -77,6 +77,7 @@ module execute (
       out_memory_addr_is_write_q    <= out_memory_addr_is_write_d;
       result_is_final_instruction_q <= result_is_final_instruction_d;
       load_store_variant_out_q      <= load_store_variant_out_d;
+      should_reset_branch           <= ex_is_branch_address || ex_is_branch_address_conditional;
     end
   end
 

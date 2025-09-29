@@ -19,8 +19,9 @@ module instruction_fetch (
   //Stall bit
   input logic stall,
 
-  //Branch override
-  input logic branch_hazard
+  //Branch reset
+  input  logic branch_reset_in,
+  output logic branch_reset_out
 
 );
 
@@ -46,13 +47,18 @@ module instruction_fetch (
   /* Sequential Logic */
   always_ff @(posedge clk) begin
     if (rst) begin
-      output_valid <= 0;
-    end else if (!stall) begin
-      instruction <= instruction_d;
-      instruction_pc <= pc;
-      output_valid <= output_valid_d && !branch_hazard;
-      //Whatever address we requested this cycle should be remembered next cycle
-      requested_mem_addr <= (mem_rd.arvalid && mem_rd.arready) ? mem_rd.araddr : requested_mem_addr;
+      output_valid     <= 0;
+      branch_reset_out <= 0;
+    end else begin
+      if (!stall) begin
+        instruction <= instruction_d;
+        instruction_pc <= pc;
+        output_valid <= output_valid_d;
+        //Whatever address we requested this cycle should be remembered next cycle
+        requested_mem_addr <= (mem_rd.arvalid && mem_rd.arready) ? mem_rd.araddr : requested_mem_addr;
+      end
+      //Always forward the branch reset
+      branch_reset_out <= branch_reset_in;
     end
   end
 
@@ -63,8 +69,8 @@ module instruction_fetch (
     output_valid_d = requested_mem_addr_matches_pc && mem_rd.rvalid;
 
     //If we have a valid output and are not stalled, advance the pc
-    pc_if_write    = (output_valid_d && !stall) ? pc + 4 : pc;
-    pc_if_write_en = pc_if_write != pc;
+    pc_if_write    = (output_valid_d) ? pc + 4 : pc;
+    pc_if_write_en = (pc_if_write != pc) && !stall;
 
     //Always request the next pc. Do it here so that it gets latched in the memory controller
     //Doesn't matter if it is ready

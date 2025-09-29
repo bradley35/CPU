@@ -8,17 +8,6 @@ sys.path.append(os.path.dirname(__file__))
 from tests.CPU.riscv_tests_gen import *
 from tests.CPU.test_helpers import *
 
-async def resetAndPrepare(dut):
-    dut.rst.value = 1
-    await ReadWrite()
-    clock = Clock(dut.clk, 1, unit="ns")
-    cocotb.start_soon(clock.start())
-    await Timer(10, unit="ns")
-    await ReadWrite()
-    dut.rst.value = 0
-    clock.stop()
-    await ReadWrite()
-
 
 
 def loadRegisters(register_list, dut):

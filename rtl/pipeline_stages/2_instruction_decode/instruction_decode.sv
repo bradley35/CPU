@@ -50,7 +50,10 @@ module instruction_decode (
   output logic stall_out,
 
   //Register Access
-  input register_holder_t register_access
+  input register_holder_t register_access,
+
+  //Branch reset
+  input logic branch_reset
 );
 `ifndef VIVADO
   import instruction_decode_types::*;
@@ -80,47 +83,54 @@ module instruction_decode (
   alu_op_e                    alu_op_d;
   logic                       thirty_two_bit_op_d;
 
+  logic                       waiting_for_branch_reset_q;
+  logic                       waiting_for_branch_reset_d;
   /* Sequential Logic */
   always_ff @(posedge clk) begin
-    if (rst) output_valid <= 0;
-    if (!stall_out) begin
-      output_valid                     <= pc_output_valid;
-      ex_op_1                          <= operand_1_d;
-      ex_op_2                          <= operand_2_d;
-      ex_misc_op                       <= misc_op_d;
-      rd                               <= rd_d;
-      operand_1_fwd                    <= operand_1_fwd_d;
-      operand_2_fwd                    <= operand_2_fwd_d;
-      load_store_variant               <= load_store_variant_d;
-      alu_op                           <= alu_op_d;
-      ex_is_memory_address             <= ex_is_memory_address_d;
-      ex_is_branch_address             <= ex_is_branch_address_d;
-      ex_is_branch_address_conditional <= ex_is_branch_address_conditional_d;
-      memory_addr_is_write             <= memory_addr_is_write_d;
-      write_to_rd                      <= write_to_rd_d;
-      is_final_instruction             <= is_final_instruction_d;
-      thirty_two_bit_op                <= thirty_two_bit_op_d;
+    if (rst) begin
+      output_valid               <= 0;
+      waiting_for_branch_reset_q <= 0;
+    end else begin
+      if (!stall_in) begin
+        output_valid                     <= pc_output_valid && !waiting_for_branch_reset_q;
+        ex_op_1                          <= operand_1_d;
+        ex_op_2                          <= operand_2_d;
+        ex_misc_op                       <= misc_op_d;
+        rd                               <= rd_d;
+        operand_1_fwd                    <= operand_1_fwd_d;
+        operand_2_fwd                    <= operand_2_fwd_d;
+        load_store_variant               <= load_store_variant_d;
+        alu_op                           <= alu_op_d;
+        ex_is_memory_address             <= ex_is_memory_address_d;
+        ex_is_branch_address             <= ex_is_branch_address_d;
+        ex_is_branch_address_conditional <= ex_is_branch_address_conditional_d;
+        memory_addr_is_write             <= memory_addr_is_write_d;
+        write_to_rd                      <= write_to_rd_d;
+        is_final_instruction             <= is_final_instruction_d;
+        thirty_two_bit_op                <= thirty_two_bit_op_d;
+      end
+      //Always accept the branch reset
+      waiting_for_branch_reset_q <= waiting_for_branch_reset_d;
 
-    end
-
-    if (stall_out && !stall_in) begin
-      //If we are asserting a stall but not recieving an upstrema one, we need to send dead instructions
-      output_valid <= 0;
-    end
-    //MEM can stall, in which case a QRT pointing to mem should advance and a QRT pointing to WB should advance to a forwarding buffer
-    if (stall_in) begin
-      case (operand_1_fwd)
-        ALU:     operand_1_fwd <= MEM;
-        MEM:     operand_1_fwd <= WB;
-        WB:      operand_1_fwd <= WB_BUF;
-        default: ;
-      endcase
-      case (operand_2_fwd)
-        ALU:     operand_2_fwd <= MEM;
-        MEM:     operand_2_fwd <= WB;
-        WB:      operand_2_fwd <= WB_BUF;
-        default: ;
-      endcase
+      if ((stall_a || stall_b) && !stall_in) begin
+        //If we are asserting a stall but not recieving an upstrema one, we need to send dead instructions
+        output_valid <= 0;
+      end
+      //MEM can stall, in which case a QRT pointing to mem should advance and a QRT pointing to WB should advance to a forwarding buffer
+      if (stall_in) begin
+        case (operand_1_fwd)
+          ALU:     operand_1_fwd <= MEM;
+          MEM:     operand_1_fwd <= WB;
+          WB:      operand_1_fwd <= WB_BUF;
+          default: ;
+        endcase
+        case (operand_2_fwd)
+          ALU:     operand_2_fwd <= MEM;
+          MEM:     operand_2_fwd <= WB;
+          WB:      operand_2_fwd <= WB_BUF;
+          default: ;
+        endcase
+      end
     end
   end
   /* Combination Logic */
@@ -290,12 +300,14 @@ module instruction_decode (
   double_word         operand_2_d;
   double_word         misc_op_d;
   logic         [4:0] rd_d;
-
+  logic               stall_a;
+  logic               stall_b;
+  logic               stall_from_incoming_data;
+  logic               stall_from_branch_completion;
   always_comb begin
     logic [4:0] operand_1_next_register = '0;
     logic [4:0] operand_2_next_register = '0;
-    logic       stall_a;
-    logic       stall_b;
+
     operand_1_fwd_d         = NONE;
     operand_2_fwd_d         = NONE;
 
@@ -373,31 +385,39 @@ module instruction_decode (
     end
 
     stall_a = 0;
-    unique case (operand_1_fwd_d)
-      ALU:
-      if (ex_is_memory_address) begin
-        stall_a = 1;
-      end
-      MEM:
-      if (mem_input_is_mem_addr) begin
-        stall_a = !mem_output_valid_d;
-      end
-      default: ;
-    endcase
+    if (pc_output_valid) begin
+      unique case (operand_1_fwd_d)
+        ALU:
+        if (ex_is_memory_address) begin
+          stall_a = 1;
+        end
+        MEM:
+        if (mem_input_is_mem_addr) begin
+          stall_a = !mem_output_valid_d;
+        end
+        default: ;
+      endcase
+    end
     stall_b = 0;
-    unique case (operand_2_fwd_d)
-      ALU:
-      if (ex_is_memory_address) begin
-        stall_b = 1;
-      end
-      MEM:
-      if (mem_input_is_mem_addr) begin
-        stall_b = !mem_output_valid_d;
-      end
-      default: ;
-    endcase
+    if (pc_output_valid) begin
+      unique case (operand_2_fwd_d)
+        ALU:
+        if (ex_is_memory_address) begin
+          stall_b = 1;
+        end
+        MEM:
+        if (mem_input_is_mem_addr) begin
+          stall_b = !mem_output_valid_d;
+        end
+        default: ;
+      endcase
+    end
+    stall_from_incoming_data = (stall_a || stall_b) && pc_output_valid;
+    stall_from_branch_completion =  (waiting_for_branch_reset_q || ((ex_is_branch_address_d || ex_is_branch_address_conditional_d) && pc_output_valid)) && !branch_reset;
+    waiting_for_branch_reset_d = stall_from_branch_completion && !stall_from_incoming_data && !stall_in;
 
-    stall_out = stall_in || stall_a || stall_b;
+    stall_out = (stall_in || stall_from_incoming_data || stall_from_branch_completion) && pc_output_valid;
   end
+
 endmodule
 
