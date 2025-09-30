@@ -10,7 +10,7 @@ CHUNKFILES    := $(addprefix $(BUILD)/c,$(addsuffix .chunk,$(CHUNK_INDICES)))
 
 # Arch/ABI + bare-metal friendly flags
 CFLAGS  := -Wall -O2 -march=rv64i_zifencei -mabi=lp64 \
-           -ffreestanding -fno-builtin -MMD -MP
+           -ffreestanding -fno-builtin -MMD -MP -ffixed-x10
 # If you use inline asm or want stricter codegen, consider also: -fno-exceptions -fno-rtti (for C++)
 
 # Linker script

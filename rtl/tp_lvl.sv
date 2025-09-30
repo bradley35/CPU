@@ -1,8 +1,9 @@
 module tp_lvl (
-  input  logic clk,
-  input  logic reset_pin,
-  input  logic rx,
-  output logic tx
+  input  logic       clk,
+  input  logic       reset_pin,
+  input  logic       rx,
+  output logic       tx,
+  output logic [3:0] reg_10
 );
 
   import instruction_decode_types::*;
@@ -42,7 +43,10 @@ module tp_lvl (
     .full_table (),
     .pc_next    ()
   );
-
+  //assign reg_10 = register_table.full_table.x_regs[10][3:0];
+  assign reg_10 = {
+    !rx, !tx, register_table.full_table.x_regs[10][1], register_table.full_table.x_regs[10][0]
+  };
 
   axi_interface_if main_memory_axi ();
   bulk_read_interface main_memory_bulk_interface ();
@@ -101,7 +105,11 @@ module tp_lvl (
   uart_over_axi4lite uart (
     .clk,
     .rst,
+`ifndef VIVADO
     .rx,
+`else
+    .rx          (1'b1),
+`endif
     .tx,
     .read_access (uart_interface.rd_slv),
     .write_access(uart_interface.wr_slv)
@@ -133,6 +141,7 @@ module tp_lvl (
   assign if_memory_interface.awvalid = 0;
   assign if_memory_interface.wvalid = 0;
   assign if_memory_interface.rready = x32_bit_if_memory_interface.rready;
+  assign if_memory_interface.bready = 1;
 
   /* Connections */
   logic        decode_stage_stall_out;
@@ -270,6 +279,7 @@ module tp_lvl (
 
     /* Unlatched outputs (will be latched by memory read) */
     .rd_out_d                     (),
+    .add_result                   (),
     .result_d                     (),
     .write_to_rd_out_d            (),
     .result_is_branch_addr_d      (),
@@ -308,7 +318,8 @@ module tp_lvl (
     .clk,
     .rst,
 
-    .ex_result_d(execute_stage.result_d),
+    //Memory addresses always come from an ADD
+    .ex_result_d(execute_stage.add_result),
     .ex_result_q(execute_stage.result_q),
 
     .ex_op_2_pt_d(execute_stage.operand_2_pt_d),
@@ -335,7 +346,8 @@ module tp_lvl (
     .mem_rd      (data_controlled_interface.rd_mst),
     .mem_wr      (data_controlled_interface.wr_mst),
 
-    .result_q(memory_stage_result_q),
+    .result_q       (memory_stage_result_q),
+    .result_q_plus_4(),
 
     .result_valid_q(memory_stage_result_valid_q),
     .result_valid_d(memory_stage_result_valid_d),
@@ -357,6 +369,7 @@ module tp_lvl (
 
 
     .mem_result           (memory_stage.result_q),
+    .mem_result_plus_4    (memory_stage.result_q_plus_4),
     .mem_result_valid     (memory_stage.result_valid_q && !program_complete),
     .result_is_branch_addr(memory_stage.result_is_branch_addr_q),
     .write_to_rd          (memory_stage.write_to_rd_q),

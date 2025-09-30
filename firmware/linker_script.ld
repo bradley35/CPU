@@ -10,6 +10,9 @@ MEMORY
     BOOT (rxw) : ORIGIN = 0x00000000, LENGTH = 4K
 }
 
+/* Set the stack pointer to the end of the BOOT memory region. */
+_stack_pointer = ORIGIN(BOOT) + LENGTH(BOOT);
+
 SECTIONS
 {
     . = 0x0000000000000000;

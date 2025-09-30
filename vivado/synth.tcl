@@ -30,6 +30,7 @@ set_property verilog_define {VIVADO=1} [current_fileset]
 # set_property include_dirs [list rtl/include] [current_fileset]
 
 # Synthesize
+# CAN USE:  -flatten_hierarchy none
 synth_design -top $TOP -part $PART
 
 # --- Find instances with very large logical pin counts ---
@@ -81,5 +82,24 @@ big_pin_report 25 "build/large_pin_instances.rpt"
 # Optional outputs
 write_checkpoint -force build/synth.dcp
 report_utilization     -file build/util.rpt
+report_utilization -hierarchical -hierarchical_depth 3 -file build/util_hier.rpt
 report_timing_summary  -file build/timing.rpt
 
+place_design
+route_design
+write_bitstream -force build/top.bit
+
+
+# Place and route
+#opt_design
+#place_design -directive Explore
+#phys_opt_design -directive Explore
+#route_design  -directive Explore
+#phys_opt_design -directive Explore
+#place_design -directive Explore
+#route_design  -directive AggressiveExplore
+#phys_opt_design -directive AggressiveExplore
+#route_design  -directive AggressiveExplore
+#report_timing_summary  -file build/post_route_timing.rpt
+# write_bitstream -force build/top.bit
+# write_checkpoint -force build/heavy_optimization.dcp

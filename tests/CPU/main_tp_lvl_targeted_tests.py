@@ -6,13 +6,13 @@ sys.path.append(os.path.dirname(__file__))
 from tests.CPU.riscv_tests_gen import *
 from tests.CPU.test_helpers import *
 
-# @cocotb.test()
-# async def nothing_test(dut):
-#     clock = Clock(dut.clk, 1, unit="ns")
-#     await resetAndPrepare(dut)
-#     cocotb.start_soon(clock.start())
-#     await Timer(100, unit="ns")
-#     clock.stop()
+@cocotb.test()
+async def nothing_test(dut):
+    clock = Clock(dut.clk, 1, unit="ns")
+    await resetAndPrepare(dut)
+    cocotb.start_soon(clock.start())
+    await Timer(1000, unit="ns")
+    clock.stop()
     
 @cocotb.test()
 async def test_single_add(dut):
@@ -624,6 +624,33 @@ target:
     await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await First(RisingEdge(dut.program_complete), Timer(500, unit="ns"))
+    checkFinished(dut)
+    checkRegister(6, 1, dut, True)
+    checkRegister(7, 3, dut, True)
+
+
+@cocotb.test()
+async def test_jal_flush(dut):
+    """
+    Same as above but using a PC-relative JAL to a forward target.
+    Ensures the fall-through instruction is squashed and the target runs once.
+    """
+    asm = """
+        addi x6, x0, 0
+        addi x7, x0, 0
+1:
+        addi  x6, x0, 1               # may execute pre-redirect (OK)
+        jal   x0, target - 1b         # jump forward to 'target'
+        addi  x7, x7, 2               # MUST be squashed on redirect
+target:
+        addi  x7, x7, 3               # executes exactly once
+        ecall
+    """
+    loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
+    cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
+    await First(RisingEdge(dut.program_complete), Timer(500, unit="ns"))
+
     checkFinished(dut)
     checkRegister(6, 1, dut, True)
     checkRegister(7, 3, dut, True)

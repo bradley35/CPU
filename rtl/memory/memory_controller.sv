@@ -51,37 +51,47 @@ module memory_controller (
       UART:  read.arready = uart_read.arready && read_response_accepted_d;
     endcase
 
-    // Forward AR to selected target; deassert other
-    unique case (rd_next_connect)
-      CACHE: begin
-        cache_read.arvalid = read.arvalid && read_response_accepted_d;
-        cache_read.araddr  = read.araddr;
-        uart_read.arvalid  = 1'b0;
-        uart_read.araddr   = '0;
-      end
-      UART: begin
-        cache_read.arvalid = 1'b0;
-        cache_read.araddr  = '0;
-        uart_read.arvalid  = read.arvalid && read_response_accepted_d;
-        uart_read.araddr   = read.araddr;
-      end
-    endcase
+    if (!read.arvalid) begin
+      cache_read.arvalid = 1'b0;
+      cache_read.araddr  = '0;
+      uart_read.arvalid  = 1'b0;
+      uart_read.araddr   = '0;
+    end else begin
+      // Forward AR to selected target; deassert other
+      unique case (rd_next_connect)
+        CACHE: begin
+          cache_read.arvalid = read.arvalid && read_response_accepted_d;
+          cache_read.araddr  = read.araddr;
+          uart_read.arvalid  = 1'b0;
+          uart_read.araddr   = '0;
+        end
+        UART: begin
+          cache_read.arvalid = 1'b0;
+          cache_read.araddr  = '0;
+          uart_read.arvalid  = read.arvalid && read_response_accepted_d;
+          uart_read.araddr   = read.araddr;
+        end
+      endcase
+    end
   end
 
   // Return data from the previously selected target
   always_comb begin
+    //Since there is always one at a time, we can forward the rready
+    cache_read.rready = read.rready;
+    uart_read.rready  = read.rready;
     unique case (rd_current_connect)
       CACHE: begin
-        read.rvalid       = cache_read.rvalid;
-        read.rdata        = cache_read.rdata;
-        cache_read.rready = read.rready;
-        uart_read.rready  = 1'b0;
+        read.rvalid = cache_read.rvalid;
+        read.rdata  = cache_read.rdata;
+        //cache_read.rready = read.rready;
+        //uart_read.rready  = 1'b0;
       end
       UART: begin
-        read.rvalid       = uart_read.rvalid;
-        read.rdata        = uart_read.rdata;
-        uart_read.rready  = read.rready;
-        cache_read.rready = 1'b0;
+        read.rvalid = uart_read.rvalid;
+        read.rdata  = uart_read.rdata;
+        //uart_read.rready  = read.rready;
+        //cache_read.rready = 1'b0;
       end
     endcase
   end
@@ -133,23 +143,25 @@ module memory_controller (
 
   always_comb begin
     // defaults
-    cache_write.wvalid = 1'b0;
+    //cache_write.wvalid = 1'b0;
+    //Always say we will send a write data, so that wready can get set
+    cache_write.wvalid = 1'b1;
     cache_write.wdata  = '0;
     cache_write.wstrb  = '0;
-    uart_write.wvalid  = 1'b0;
+    uart_write.wvalid  = 1'b1;
     uart_write.wdata   = '0;
     uart_write.wstrb   = '0;
 
     unique case (wr_next_connect)
       CACHE: begin
-        cache_write.wvalid = write.wvalid;
-        cache_write.wdata  = write.wdata;
-        cache_write.wstrb  = write.wstrb;
+        //cache_write.wvalid = write.wvalid;
+        cache_write.wdata = write.wdata;
+        cache_write.wstrb = write.wstrb;
       end
       UART: begin
-        uart_write.wvalid = write.wvalid;
-        uart_write.wdata  = write.wdata;
-        uart_write.wstrb  = write.wstrb;
+        //uart_write.wvalid = write.wvalid;
+        uart_write.wdata = write.wdata;
+        uart_write.wstrb = write.wstrb;
       end
     endcase
   end
@@ -157,17 +169,19 @@ module memory_controller (
   assign write.wready = (wr_next_connect == CACHE) ? cache_write.wready : uart_write.wready;
 
   always_comb begin
-    cache_write.bready = 1'b0;
-    uart_write.bready  = 1'b0;
+
+    //Note that since we only accept one at a time, this should be okay
+    cache_write.bready = write.bready;
+    uart_write.bready  = write.bready;
 
     unique case (wr_current_connect)
       CACHE: begin
-        write.bvalid       = cache_write.bvalid;
-        cache_write.bready = write.bready;
+        write.bvalid = cache_write.bvalid;
+        //cache_write.bready = write.bready;
       end
       UART: begin
-        write.bvalid      = uart_write.bvalid;
-        uart_write.bready = write.bready;
+        write.bvalid = uart_write.bvalid;
+        //uart_write.bready = write.bready;
       end
     endcase
   end

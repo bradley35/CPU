@@ -297,8 +297,9 @@ module memory_with_bram_cache #(
         if (writeback_neccesary && transaction_complete) next_state = WRITEBACK;
 
         cache_rd_int.arready = transaction_complete && !writeback_neccesary && !dump_bypass;
-        //Only accept all at once
-        cache_wr_int.awready = cache_rd_int.arready && !cache_rd_int.arvalid && (cache_wr_int.awvalid && cache_wr_int.wvalid);
+        //NOTE we cannot accept simultaneous reads/writes. However, this was causing a timing issue, so we pretend that we can
+        //In the future, it would make sense to register the write and deal with it later
+        cache_wr_int.awready = cache_rd_int.arready && /*!cache_rd_int.arvalid &&*/ (cache_wr_int.wvalid);
         cache_wr_int.wready = cache_wr_int.awready;
 
 

@@ -326,15 +326,18 @@ module instruction_decode (
         misc_op_d               = instruction_pc + branch_offset;
       end
       // All immediate
-      I:
-      unique case (op)
-        JALR:    operand_2_d = 64'(signed'(rs2_imm1));
-        MISC_MEM: begin
-          operand_1_d = 4;
-          operand_2_d = instruction_pc;
-        end
-        default: operand_2_d = 64'(signed'(rs2_imm1));
-      endcase
+      I: begin
+        unique case (op)
+          JALR:    operand_2_d = 64'(signed'(rs2_imm1));
+          MISC_MEM: begin
+            operand_1_d = 4;
+            operand_2_d = instruction_pc;
+          end
+          default: operand_2_d = 64'(signed'(rs2_imm1));
+        endcase
+        //Also set operand 2 for load just in case
+        misc_op_d = 64'(signed'(rs2_imm1));
+      end
       // For store, we take base and add offset to produce operands. Need to let ALU know that these are for the address.
 
       S: begin

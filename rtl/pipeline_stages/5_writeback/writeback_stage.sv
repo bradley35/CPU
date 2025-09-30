@@ -5,6 +5,7 @@ module writeback_stage (
   input logic rst,
 
   input double_word       mem_result,
+  input double_word       mem_result_plus_4,
   input logic             mem_result_valid,
   input logic             result_is_branch_addr,
   input logic             write_to_rd,
@@ -54,7 +55,7 @@ module writeback_stage (
     register_write_en       = write_to_rd && mem_result_valid;
     register_to_write       = rd;
     //Since there is very little logic in this step, putting in an adder does not seem like an issue
-    register_value_to_write = result_is_branch_addr ? {mem_result[63:1], 1'b0} + 4 : mem_result;
+    register_value_to_write = result_is_branch_addr ? mem_result_plus_4 : mem_result;
 
 
     if (result_is_branch_addr) begin

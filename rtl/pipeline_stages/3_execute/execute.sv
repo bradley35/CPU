@@ -23,6 +23,7 @@ module execute (
   /* Unlatched outputs (will be latched by memory read) */
   output                      [4:0] rd_out_d,
   output double_word                result_d,
+  output double_word                add_result,
   output logic                      write_to_rd_out_d,
   output logic                      result_is_branch_addr_d,
   output logic                      result_is_valid_d,
@@ -85,7 +86,6 @@ module execute (
     automatic double_word tmp_result;
     automatic double_word truncated_ex_op_1;
     automatic double_word truncated_ex_op_2;
-
     unique case (thirty_two_bit_op)
       'b0: begin
         truncated_ex_op_1 = ex_op_1;
@@ -100,6 +100,9 @@ module execute (
       end
     endcase
     tmp_result = '0;
+    //1 LUT compress
+    add_result = signed'(ex_op_1) + signed'(ex_misc_op);
+
     unique case (alu_op)
       O_EQ:  tmp_result[0] = truncated_ex_op_1 == ex_op_2;
       O_NE:  tmp_result[0] = truncated_ex_op_1 != ex_op_2;
@@ -118,6 +121,7 @@ module execute (
       O_RSHIFTL:          tmp_result = truncated_ex_op_1 >> truncated_ex_op_2;
       O_RSHIFTA:          tmp_result = signed'(truncated_ex_op_1) >>> truncated_ex_op_2;
       O_ADD_MISC_OP_2_PT: tmp_result = signed'(truncated_ex_op_1) + (signed'(ex_misc_op));
+
     endcase
     result_d = tmp_result;
     if (thirty_two_bit_op) result_d = 64'(signed'(tmp_result[31:0]));

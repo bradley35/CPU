@@ -1,7 +1,7 @@
 module uart_over_axi4lite #(
-  parameter CLOCK_FREQ_OVER_BAUD_RATE = 16,
-  parameter READ_BUFFER_LENGTH_BYTES  = 128,
-  parameter WRITE_BUFFER_LENGTH_BYTES = 128,
+  parameter CLOCK_FREQ_OVER_BAUD_RATE = 72,
+  parameter READ_BUFFER_LENGTH_BYTES  = 64,
+  parameter WRITE_BUFFER_LENGTH_BYTES = 64,
   parameter UART_FRAME_BITS           = 8
 ) (
   input  logic                    clk,
@@ -120,6 +120,10 @@ WRITE_BUFFER_LENGTH_BYTES * 8
   logic           [        WRITE_BUFFER_LENGTH_BYTES * 8 - 1 : 0] write_buffer;
 
 
+  // RX input synchronizer
+  logic rx_sync_0, rx_sync_1;
+  logic rx_s;
+  assign rx_s = rx_sync_1;
   always_ff @(posedge clk) begin
     if (rst) begin
       recieve_state_q <= RC_IDLE;
@@ -129,7 +133,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
         RC_IDLE: begin
           recieve_state_q <= recieve_state_d;
           //Set the rx_counter to halfway in a cycle
-          rx_counter      <= 0;  //CLOCK_FREQ_OVER_BAUD_RATE / 2;
+          rx_counter      <= CLOCK_FREQ_OVER_BAUD_RATE / 2;
           //if (recieve_state_d == RC_START_RECIEVED) $display("Recieved start bit");
         end
         RC_START_RECIEVED: begin
@@ -145,7 +149,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
             rx_bit_counter  <= rx_bit_counter + 1;
             //Store the recieved bit
             //$display("Reading bit: %b", rx);
-            //$display("Counter is: %d", read_buffer_pointer);
+            //$display("Counter is: %d", read_buffer_pointer); 
             if (read_buffer_pointer != read_buffer_left_pointer - 1) begin
               read_buffer[read_buffer_pointer[$clog2(READ_BUFFER_LENGTH_BYTES*8)-1 : 0]] <= rx;
               read_buffer_pointer <= read_buffer_pointer + 1 == READ_BUFFER_LENGTH_BYTES*8 ? 0 : read_buffer_pointer + 1;
@@ -175,7 +179,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
       end
 
 
-
+      writer_state_q <= writer_state_d;
       //Update when a new request comes in
       if (read_access.arvalid && read_access.arready) begin
         read_access.rvalid <= 1;
@@ -184,7 +188,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
         read_access.rvalid <= 0;
       end
 
-      if (write_access.wvalid && write_access.wready) begin
+      if (write_access.awvalid && write_access.wready) begin
         write_access.bvalid <= 1;
         //TODO: Add to write buffer
         for (logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] i = 0; i < 64; i++) begin
@@ -195,6 +199,10 @@ WRITE_BUFFER_LENGTH_BYTES * 8
         write_buffer_pointer <= write_buffer_pointer + 64  >= WRITE_BUFFER_LENGTH_BYTES * 8 ? write_buffer_pointer + 64 - WRITE_BUFFER_LENGTH_BYTES * 8 : write_buffer_pointer + 64;
       end else if (writer_state_d == WR_IDLE) write_access.bvalid <= 0;
 
+      // Synchronize the async rx input
+      rx_sync_0 <= rx;
+      rx_sync_1 <= rx_sync_0;
+
     end
   end
 
@@ -202,7 +210,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
     case (recieve_state_q)
       RC_IDLE: begin
         //Go to RC_START_RECIEVED when we get the start bit (0)
-        if (!rx) recieve_state_d = RC_START_RECIEVED;
+        if (!rx_s) recieve_state_d = RC_START_RECIEVED;
         else recieve_state_d = RC_IDLE;
       end
       RC_START_RECIEVED: recieve_state_d = RC_RECIEVING_DATA;
@@ -213,7 +221,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
         else recieve_state_d = RC_RECIEVING_DATA;
       end
       RC_STOP: begin
-        if (rx) recieve_state_d = RC_IDLE;
+        if (rx_s) recieve_state_d = RC_IDLE;
         else recieve_state_d = RC_STOP;
       end
     endcase
@@ -275,18 +283,19 @@ READ_BUFFER_LENGTH_BYTES * 8
 
     //We are already ready to recieve a write, unless we never got onconfrimation of the last one being valid
     //There is only one valid write address, so we actually don't care about this one
-    write_access.awready = 1;
+
     can_accept_write     = (write_buffer_left_pointer != write_buffer_pointer - 64) && (write_buffer_left_pointer != write_buffer_pointer + WRITE_BUFFER_LENGTH_BYTES*8 - 64);
     if (writer_state_q == WR_IDLE) begin
       write_access.wready = can_accept_write;
-      writer_state_d      = write_access.wvalid ? WR_WAITING_FOR_ACCEPT : WR_IDLE;
+      writer_state_d      = write_access.awvalid ? WR_WAITING_FOR_ACCEPT : WR_IDLE;
     end else begin
-      write_access.wready = can_accept_write & write_access.bready;
+      //TODO: Get this to work with timing. write_access.bready is always 1 for us so it is fine
+      write_access.wready = can_accept_write;  // & write_access.bready;
       writer_state_d      = write_access.bready ? WR_IDLE : WR_WAITING_FOR_ACCEPT;
     end
+    write_access.awready = write_access.wready;
   end
 
 
 
 endmodule
-

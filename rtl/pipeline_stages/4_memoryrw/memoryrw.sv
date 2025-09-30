@@ -24,6 +24,7 @@ module memoryrw (
   /* Outputs to Writeback Stage */
 
   output double_word       result_q,
+  output double_word       result_q_plus_4,
   output logic             result_valid_q,
   output logic             result_is_branch_addr_q,
   output logic             write_to_rd_q,
@@ -68,6 +69,7 @@ module memoryrw (
       should_reset_branch_out <= 0;
     end else begin
       result_q                <= ex_is_mem_addr_q ? trunc_result_next : raw_result_next;
+      result_q_plus_4         <= {raw_result_next[63:1], 1'b0} + 4;
       result_valid_q          <= result_valid_d;
       result_is_branch_addr_q <= ex_is_branch_addr_q;
       write_to_rd_q           <= ex_write_to_rd_q;

@@ -25,9 +25,9 @@ async def uart_test(dut):
     """
     log = logging.getLogger("cocotb.tb")
     log.setLevel(logging.DEBUG)
-    uart_source = UartSource(dut.uart.rx, baud=6250000, bits=8)
-    uart_sink = UartSink(dut.uart.tx, baud=6250000, bits=8)
-    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    uart_source = UartSource(dut.uart.rx, baud=166600, bits=8)
+    uart_sink = UartSink(dut.uart.tx, baud=166600, bits=8)
+    cocotb.start_soon(Clock(dut.clk, 83, units="ns").start())
     await _reset(dut)
 
     axi = AxiLiteMaster(AxiLiteBus.from_entity(dut.combus), dut.clk, dut.rst)
@@ -45,9 +45,9 @@ async def uart_test(dut):
     print(output3)
     # Read out those twelve bytes
     output4 = await axi.read(0xFFFFFFFFFFFFF008, 8)
-    print(output4)
+    print(output4.data)
     output4t = await axi.read(0xFFFFFFFFFFFFF008, 8)
-    print(output4t)
+    print(output4t.data)
     output5 = await axi.read_dword(0xFFFFFFFFFFFFF000)
     print(output5)
     await uart_source.write(b'Yo')
@@ -55,7 +55,7 @@ async def uart_test(dut):
     output6 = await axi.read_dword(0xFFFFFFFFFFFFF000)
     print(output6)
     output7 = await axi.read(0xFFFFFFFFFFFFF008, 8)
-    print(output7)
+    print(output7.data)
 
     await axi.write(0xFFFFFFFFFFFFF018, b'Hello from pytho')
     await axi.write(0xFFFFFFFFFFFFF018, b'n!')
