@@ -28,9 +28,9 @@ module tp_lvl_tb;
     rx        = 1'b1;
 
     // Apply reset
-    reset_pin = 1'b1;
-    repeat (5) @(posedge clk);  // hold reset for 5 cycles
     reset_pin = 1'b0;
+    repeat (5) @(posedge clk);  // hold reset for 5 cycles
+    reset_pin = 1'b1;
 
     // Let it run for 200 cycles
     repeat (200) @(posedge clk);

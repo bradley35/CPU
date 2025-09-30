@@ -234,7 +234,7 @@ module bram_over_axi #(
         initial begin
           $display("Reading block: %s", $sformatf("firmware/build/c%0d.chunk", i));
 `ifdef VIVADO
-          $readmemh($sformatf("../firmware/build/c%0d.chunk", i), mem_blk);
+          $readmemh($sformatf("../../firmware/build/c%0d.chunk", i), mem_blk);
 `else
           $readmemh($sformatf("firmware/build/c%0d.chunk", i), mem_blk);
 `endif

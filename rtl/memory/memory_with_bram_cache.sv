@@ -223,7 +223,7 @@ module memory_with_bram_cache #(
             if (dump_counter == (INDEX_BITS + 1)'(CACHE_LINES)) begin
               //That means that the last one (CACHE_LINES-1) was accepted
               for (int i = 0; i < CACHE_LINES; i++) begin
-                cache_valid_dirty[i] = '0;
+                cache_valid_dirty[i] <= '0;
               end
             end else begin
 
