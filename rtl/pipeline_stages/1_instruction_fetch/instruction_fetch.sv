@@ -25,9 +25,9 @@ module instruction_fetch (
 
 );
 
-  initial begin
-    if (mem_rd.DATA_W != 32) $error("IF requires 32 bit memory access");
-  end
+  // initial begin
+  //   if (mem_rd.DATA_W != 32) $error("IF requires 32 bit memory access");
+  // end
 
   /* Define wires */
   typedef logic [63:0] double_word;
@@ -51,12 +51,12 @@ module instruction_fetch (
       branch_reset_out <= 0;
     end else begin
       if (!stall) begin
-        instruction <= instruction_d;
+        instruction    <= instruction_d;
         instruction_pc <= pc;
-        output_valid <= output_valid_d;
+        output_valid   <= output_valid_d;
         //Whatever address we requested this cycle should be remembered next cycle
-        requested_mem_addr <= (mem_rd.arvalid && mem_rd.arready) ? mem_rd.araddr : requested_mem_addr;
       end
+      requested_mem_addr <= (mem_rd.arvalid && mem_rd.arready) ? mem_rd.araddr : requested_mem_addr;
       //Always forward the branch reset
       branch_reset_out <= branch_reset_in;
     end
@@ -74,7 +74,7 @@ module instruction_fetch (
 
     //Always request the next pc. Do it here so that it gets latched in the memory controller
     //Doesn't matter if it is ready
-    mem_rd.araddr  = pc_next;
+    (* KEEP = "TRUE" *)mem_rd.araddr  = pc_next;
     //Our request is always valid, since we need a read every cycle
     mem_rd.arvalid = 1 && !rst;
     mem_rd.rready  = 1;

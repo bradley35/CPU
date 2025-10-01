@@ -7,7 +7,8 @@ module ttbit_adapter (
 );
   //64 to 32 bit memory translator
   //Remove the thirty-two bit flip
-  assign sf_out.araddr = tt_in.araddr & 64'b1111111111111111111111111111111111111111111111111111111111111011;
+  (* KEEP = "TRUE" *) assign
+      sf_out.araddr = tt_in.araddr & 64'b1111111111111111111111111111111111111111111111111111111111111011;
   logic requested_bit;
   always_ff @(posedge clk) begin
     //We need to ff the mem_addr

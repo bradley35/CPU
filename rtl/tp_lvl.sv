@@ -111,7 +111,7 @@ module tp_lvl (
   uart_over_axi4lite uart (
     .clk,
     .rst,
-`ifndef VIVADO
+`ifdef VIVADO
     .rx,
 `else
     .rx          (1'b1),

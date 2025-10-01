@@ -11,6 +11,7 @@ read_verilog -sv ../rtl/memory/bulk_read_to_axi_adapter.sv
 read_verilog -sv ../rtl/memory/memory_with_bram_cache.sv
 read_verilog -sv ../rtl/memory/memory_controller.sv
 read_verilog -sv ../rtl/memory/bulk_read_multiplexer.sv
+read_verilog -sv ../rtl/memory/ttbit_adapter.sv
 read_verilog -sv ../rtl/uart/uart.sv
 read_verilog -sv ../rtl/registers/registers.sv
 read_verilog -sv ../rtl/registers/registers_types.sv
@@ -31,7 +32,7 @@ set_property verilog_define {VIVADO=1} [current_fileset]
 
 # Synthesize
 # CAN USE:  -flatten_hierarchy none
-synth_design -top $TOP -part $PART
+synth_design -top $TOP -part $PART -flatten_hierarchy none
 
 # --- Find instances with very large logical pin counts ---
 proc big_pin_report {{limit 20} {outfile "build/large_pin_instances.rpt"}} {

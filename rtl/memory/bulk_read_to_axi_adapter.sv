@@ -94,6 +94,8 @@ module bulk_read_to_axi_adapter #(
     axi_write_out.wdata    = '0;
     axi_write_out.wstrb    = '0;
 
+    bulk_read_in.req_ready = 0;
+    next_state             = AD_IDLE;
     case (current_state)
       AD_IDLE: begin
         //Present ready to master

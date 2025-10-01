@@ -56,17 +56,17 @@ module memory_with_bram_cache #(
 
     logic [ADDR_W-1:0] base_address;
   } address_parts_rt;
-  function automatic address_parts_rt address_parts(logic [ADDR_W - 1 : 0] a);
+  function automatic address_parts_rt address_parts(input logic [ADDR_W - 1 : 0] a);
     automatic logic [INDEX_BITS-1:0] index = a[ADDR_W-1-TAG_BITS-:INDEX_BITS];
     automatic tag_t                  tag = a[ADDR_W-1-:TAG_BITS];
     automatic logic [    ADDR_W-1:0] base;
 
     base = {tag, index, {OFFSET_BITS{1'b0}}};
-
     return '{index: index, base_address: base, tag: tag, offset: a[OFFSET_BITS-1:0]};
   endfunction
 
-  function automatic logic address_match(logic [ADDR_W - 1 : 0] a, tag_t tag, line_meta_t meta);
+  function automatic logic address_match(input logic [ADDR_W - 1 : 0] a, input tag_t tag,
+                                         input line_meta_t meta);
     automatic address_parts_rt parts = address_parts(a);
     return parts.tag == tag && meta.valid;
   endfunction
@@ -76,7 +76,7 @@ module memory_with_bram_cache #(
   tag_t       cache_tags       [CACHE_LINES];
   line_meta_t cache_valid_dirty[CACHE_LINES];
 
-  typedef enum {
+  typedef enum logic [2:0] {
     IDLE,
     READ,
     WRITE,
@@ -86,7 +86,7 @@ module memory_with_bram_cache #(
 
   //NOTE: We burn a cycle on cache miss to keep the logic simpler (two step: load to cache, present cache ... it would be possible to do these at once).
   //I believe this is a fine tradeoff, so long as no cycles are burned on hits
-  typedef enum {
+  typedef enum logic [2:0] {
     EF_IDLE,
     EF_READ_HIT,
     EF_READ_MISS,
@@ -115,10 +115,12 @@ module memory_with_bram_cache #(
   line_meta_t                                  replacing_meta;
 
   logic                   [      ADDR_W - 1:0] address_reg;
+  address_parts_rt                             address_reg_parts;
   logic                   [    ADDR_W - 1 : 0] write_reg;
   logic                   [    DATA_W/8-1 : 0] wstrb_reg;
 
   logic                   [      ADDR_W - 1:0] accepted_addr;
+  address_parts_rt                             accepted_addr_parts;
   logic                                        new_request_accepted;
 
   logic                                        memory_req_dispatched;
@@ -127,7 +129,7 @@ module memory_with_bram_cache #(
   logic unsigned          [    INDEX_BITS : 0] dump_counter;
 
   assign memory_access_out.dumping_cache = dumping;
-
+  logic writeback_neccesary;
 
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -151,7 +153,7 @@ module memory_with_bram_cache #(
       wstrb_reg             <= '0;
       memory_req_dispatched <= '0;
       dumping               <= '0;
-      dump_counter          <= 0;
+      dump_counter          <= '0;
     end else begin
       current_state <= next_state;
       //If the next state is idle, we must be done dumping.
@@ -161,46 +163,42 @@ module memory_with_bram_cache #(
       if (new_request_accepted) begin
         automatic
         logic
-        redirect_replacing = (replacing_index == address_parts(
-            accepted_addr
-        ).index) && replacing_meta.valid;
+        redirect_replacing = (replacing_index == accepted_addr_parts.index) && replacing_meta.valid;
         address_reg <= accepted_addr;
-        write_reg <= cache_wr_int.wdata;
-        wstrb_reg <= cache_wr_int.wstrb;
-
+        write_reg   <= cache_wr_int.wdata;
+        wstrb_reg   <= cache_wr_int.wstrb;
+        if (redirect_replacing) begin
+          $display("Redirect Replacing");
+        end
         //Set the cache bits
-        retrieved_cache_line  <= redirect_replacing ? replacing_cache_line : cache_memory[address_parts(
-            accepted_addr
-        ).index];
+        retrieved_cache_line  <= redirect_replacing ? replacing_cache_line : cache_memory[accepted_addr_parts.index];
         //Tag will be unchanged, as whatever is stored at this index has the same tag as the replacement
-        retrieved_tag <= cache_tags[address_parts(accepted_addr).index];
-        retrieved_meta <= redirect_replacing ? replacing_meta : cache_valid_dirty[address_parts(
-            accepted_addr
-        ).index];
+        retrieved_tag <= cache_tags[accepted_addr_parts.index];
+        retrieved_meta <= redirect_replacing ? replacing_meta : cache_valid_dirty[accepted_addr_parts.index];
 
         memory_req_dispatched <= 0;
       end
-      case (effective_state)
+      unique case (effective_state)
         EF_READ_MISS, EF_WRITE_MISS: begin
           if (memory_req_dispatched) begin
             //We already sent the memory request
             if (memory_access_out.resp_valid) begin
-              cache_memory[address_parts(address_reg).index] <= memory_access_out.resp_rdata;
+              cache_memory[address_reg_parts.index] <= memory_access_out.resp_rdata;
               retrieved_cache_line <= memory_access_out.resp_rdata;
               replaced_cache_line <= retrieved_cache_line;
 
-              cache_tags[address_parts(address_reg).index] <= address_parts(address_reg).tag;
-              retrieved_tag <= address_parts(address_reg).tag;
+              cache_tags[address_reg_parts.index] <= address_reg_parts.tag;
+              retrieved_tag <= address_reg_parts.tag;
               replaced_tag <= retrieved_tag;
 
-              cache_valid_dirty[address_parts(
-                  address_reg
-              ).index] <=
-              '{valid: 1, dirty: effective_state == EF_WRITE_MISS};
-              retrieved_meta <= '{valid: 1, dirty: effective_state == EF_WRITE_MISS};
+              cache_valid_dirty[address_reg_parts.index] <= '{
+                  valid: 1'b1,
+                  dirty: effective_state == EF_WRITE_MISS
+              };
+              retrieved_meta <= '{valid: 1'b1, dirty: effective_state == EF_WRITE_MISS};
               replaced_meta <= retrieved_meta;
 
-              replaced_index <= address_parts(address_reg).index;
+              replaced_index <= address_reg_parts.index;
             end
           end else begin  //Otherwise make sure we have dispatched the request
             memory_req_dispatched <= memory_req_dispatched || memory_access_out.req_ready;
@@ -215,6 +213,7 @@ module memory_with_bram_cache #(
           cache_valid_dirty[replacing_index] <= replacing_meta;
 
         end
+        default: ;
       endcase
       case (effective_state)
         EF_DUMPING: begin
@@ -244,12 +243,12 @@ module memory_with_bram_cache #(
 
   end
 
-  logic writeback_neccesary;
+
   always_comb begin
 
     writeback_neccesary = (replaced_meta.valid == 1 && replaced_meta.dirty == 1);
 
-    case (current_state)
+    unique case (current_state)
       IDLE: effective_state = EF_IDLE;
       READ:
       case (address_match(
@@ -267,6 +266,7 @@ module memory_with_bram_cache #(
       endcase
       WRITEBACK: effective_state = EF_WRITEBACK;
       DUMPING: effective_state = EF_DUMPING;
+      default: effective_state = EF_IDLE;
     endcase
   end
   always_comb begin
@@ -276,7 +276,8 @@ module memory_with_bram_cache #(
     new_request_accepted = 0;
     accepted_addr        = '0;
 
-    case (effective_state)
+
+    unique case (effective_state)
       //We can accept a new request in all these cases so long as our response was accepted
       IDLE, EF_READ_HIT, EF_WRITE_HIT, EF_WRITEBACK: begin
         automatic logic transaction_complete;
@@ -287,6 +288,7 @@ module memory_with_bram_cache #(
           IDLE:         transaction_complete = 1;
           EF_READ_HIT:  transaction_complete = cache_rd_int.rready;
           EF_WRITE_HIT: transaction_complete = cache_wr_int.bready;
+          default:      ;
         endcase
 
         if ((dump_cache || dumping) && transaction_complete) begin
@@ -337,8 +339,13 @@ module memory_with_bram_cache #(
         cache_wr_int.wready  = cache_wr_int.awready;
       end
     endcase
-
+    accepted_addr_parts = address_parts(accepted_addr);
+    address_reg_parts   = address_parts(address_reg);
   end
+
+  logic [             OFFSET_BITS - 1 : 0] offset_debug_out;
+  logic [OFFSET_BITS-1 : $clog2(DATA_W/8)] line_offset_debug_out;
+  logic [                  DATA_W - 1 : 0] new_word;
 
   always_comb begin
     memory_access_out.req_valid = 0;
@@ -356,37 +363,45 @@ module memory_with_bram_cache #(
     replacing_index             = '0;
     replacing_tag               = '0;
     replacing_meta              = '0;
+    new_word                    = '0;
 
-    case (effective_state)
+    offset_debug_out            = '0;
+    line_offset_debug_out       = '0;
+
+    unique case (effective_state)
       //When we miss, send out a request to update the cache so these can become a hit
       EF_READ_MISS, EF_WRITE_MISS: begin
         if (!memory_req_dispatched) begin
           memory_access_out.req_valid = 1;
-          memory_access_out.req_addr  = address_parts(address_reg).base_address;
+          memory_access_out.req_addr  = address_reg_parts.base_address;
           memory_access_out.req_write = 0;
         end
       end
       //On hit, we can present the result
       EF_READ_HIT: begin
-        automatic logic [OFFSET_BITS - 1 : 0] offset = address_parts(address_reg).offset;
-        cache_rd_int.rvalid = 1;
-        cache_rd_int.rdata  = retrieved_cache_line[offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]];
+        automatic logic [OFFSET_BITS - 1 : 0] offset;
+        offset                = address_reg_parts.offset;
+        cache_rd_int.rvalid   = 1;
+        offset_debug_out      = offset;
+        cache_rd_int.rdata    = retrieved_cache_line[offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]];
+        line_offset_debug_out = offset[OFFSET_BITS-1 : $clog2(DATA_W/8)];
       end
       // On write hit, we can tell the master we are done, but we also need to update the cache storage
       EF_WRITE_HIT: begin
-        automatic logic [OFFSET_BITS - 1 : 0] offset = address_parts(address_reg).offset;
-        logic           [     DATA_W - 1 : 0] new_word;
+        automatic logic [OFFSET_BITS - 1 : 0] offset = address_reg_parts.offset;
+
         for (int b = 0; b < DATA_W / 8; b++) begin
           new_word[b*8+:8] = wstrb_reg[b] ? write_reg[b*8+:8] : retrieved_cache_line[offset[OFFSET_BITS-1 : $clog2(
               DATA_W/8)]][b*8+:8];
         end
-        cache_wr_int.bvalid = 1;
-        replacing_cache_line = retrieved_cache_line;
+        cache_wr_int.bvalid                                            = 1;
+        replacing_cache_line                                           = retrieved_cache_line;
         replacing_cache_line[offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = new_word;
-        replacing_index = address_parts(address_reg).index;
-        replacing_tag = retrieved_tag;
-        replacing_meta = '{valid: 1, dirty : 1};
+        replacing_index                                                = address_reg_parts.index;
+        replacing_tag                                                  = retrieved_tag;
+        replacing_meta                                                 = '{valid: 1, dirty : 1};
       end
+      default: ;
     endcase
 
     //When we transition to writeback, we need to present our writeback request
@@ -396,7 +411,7 @@ module memory_with_bram_cache #(
       memory_access_out.req_addr  = {replaced_tag, replaced_index, (OFFSET_BITS)'('b0)};
       memory_access_out.req_write = 1;
       memory_access_out.req_wdata = replaced_cache_line;
-      memory_access_out.req_wstrb = '{default: '{default: 1}};
+      memory_access_out.req_wstrb = '{default: 8'hFF};
     end
   end
 

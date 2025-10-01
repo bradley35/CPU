@@ -100,13 +100,11 @@ module memoryrw (
 
     if (ex_is_mem_addr_d && ex_result_valid_d) begin
       automatic logic [2:0] offset_next = ex_result_d[2:0];
-      automatic logic       request_is_valid;
       mem_rd.araddr  = ex_result_d & 'b1111111111111111111111111111111111111111111111111111111111111000;
       mem_wr.awaddr  = ex_result_d & 'b1111111111111111111111111111111111111111111111111111111111111000;
       //If we are about to branch, kill the request
-      request_is_valid = !ex_is_branch_addr_q;
-      mem_rd.arvalid = (!ex_mem_addr_is_write_d) && request_is_valid;
-      mem_wr.awvalid = (ex_mem_addr_is_write_d) && request_is_valid;
+      mem_rd.arvalid = (!ex_mem_addr_is_write_d);
+      mem_wr.awvalid = (ex_mem_addr_is_write_d);
       mem_wr.wvalid = mem_wr.awvalid;
 
       //Need to offset this by the offset within the 64 bit

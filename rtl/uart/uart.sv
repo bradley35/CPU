@@ -51,48 +51,8 @@ Outline:
 
 */
 
-  logic can_accept_write;
+  logic                                                           can_accept_write;
 
-
-  function automatic logic [63:0] read_response(logic [1:0] address);
-    case (address)
-      2'b00: begin
-        //return 64'(read_buffer_pointer >> 3);
-        automatic
-        logic signed [$clog2(
-READ_BUFFER_LENGTH_BYTES * 8
-) : 0]
-        difference = read_buffer_pointer - read_buffer_left_pointer;
-        if (difference >= 0) return 64'(difference >>> 3);
-        else return (READ_BUFFER_LENGTH_BYTES * 8 + 64'(difference)) >>> 3;
-      end
-      2'b01: begin
-        //Pop from the buffer
-        automatic
-        logic [$clog2(
-READ_BUFFER_LENGTH_BYTES * 8
-) - 1 : 0]
-        lp64 = read_buffer_left_pointer + 64;
-        if (lp64 >= READ_BUFFER_LENGTH_BYTES * 8) begin
-          read_buffer_left_pointer <= lp64 - (READ_BUFFER_LENGTH_BYTES * 8) > read_buffer_pointer ? read_buffer_pointer : lp64 - (READ_BUFFER_LENGTH_BYTES * 8);
-        end else begin
-          read_buffer_left_pointer <= lp64 > read_buffer_pointer ? read_buffer_pointer : lp64;
-        end
-
-        return read_buffer[read_buffer_left_pointer+:64];
-      end
-      2'b10: begin
-        automatic
-        logic signed [$clog2(
-WRITE_BUFFER_LENGTH_BYTES * 8
-) : 0]
-        difference = write_buffer_pointer - write_buffer_left_pointer;
-        if (difference >= 0) return 64'(difference >>> 3);
-        else return (WRITE_BUFFER_LENGTH_BYTES * 8 + 64'(difference)) >>> 3;
-      end
-      default: return 0;
-    endcase
-  endfunction
 
   reader_state_e                                                  reader_state_d;
   reader_state_e                                                  reader_state_q;
@@ -126,7 +86,23 @@ WRITE_BUFFER_LENGTH_BYTES * 8
   assign rx_s = rx_sync_1;
   always_ff @(posedge clk) begin
     if (rst) begin
-      recieve_state_q <= RC_IDLE;
+      recieve_state_q           <= RC_IDLE;
+      reader_state_q            <= RS_IDLE;
+      writer_state_q            <= WR_IDLE;
+      tx_output_state_q         <= SND_IDLE;
+
+      rx_counter                <= '0;
+      tx_counter                <= '0;
+      rx_bit_counter            <= '0;
+      tx_bit_counter            <= '0;
+
+      read_buffer_pointer       <= '0;
+      read_buffer_left_pointer  <= '0;
+      read_buffer               <= '0;
+
+      write_buffer_pointer      <= '0;
+      write_buffer_left_pointer <= '0;
+      write_buffer              <= '0;
     end else begin
       reader_state_q <= reader_state_d;
       case (recieve_state_q)
@@ -183,7 +159,42 @@ WRITE_BUFFER_LENGTH_BYTES * 8
       //Update when a new request comes in
       if (read_access.arvalid && read_access.arready) begin
         read_access.rvalid <= 1;
-        read_access.rdata  <= read_response(read_access.araddr[4:3]);
+        case (read_access.araddr[4:3])
+          2'b00: begin
+            automatic
+            logic signed [$clog2(
+READ_BUFFER_LENGTH_BYTES * 8
+) : 0]
+            difference = read_buffer_pointer - read_buffer_left_pointer;
+            if (difference >= 0) read_access.rdata <= 64'(difference >>> 3);
+            else read_access.rdata <= (READ_BUFFER_LENGTH_BYTES * 8 + 64'(difference)) >>> 3;
+          end
+          2'b01: begin
+            //Pop from the buffer
+            automatic
+            logic [$clog2(
+READ_BUFFER_LENGTH_BYTES * 8
+) - 1 : 0]
+            lp64 = read_buffer_left_pointer + 64;
+            if (lp64 >= READ_BUFFER_LENGTH_BYTES * 8) begin
+              read_buffer_left_pointer <= lp64 - (READ_BUFFER_LENGTH_BYTES * 8) > read_buffer_pointer ? read_buffer_pointer : lp64 - (READ_BUFFER_LENGTH_BYTES * 8);
+            end else begin
+              read_buffer_left_pointer <= lp64 > read_buffer_pointer ? read_buffer_pointer : lp64;
+            end
+
+            read_access.rdata <= read_buffer[read_buffer_left_pointer+:64];
+          end
+          2'b10: begin
+            automatic
+            logic signed [$clog2(
+WRITE_BUFFER_LENGTH_BYTES * 8
+) : 0]
+            difference = write_buffer_pointer - write_buffer_left_pointer;
+            if (difference >= 0) read_access.rdata <= 64'(difference >>> 3);
+            else read_access.rdata <= (WRITE_BUFFER_LENGTH_BYTES * 8 + 64'(difference)) >>> 3;
+          end
+          default: read_access.rdata <= 0;
+        endcase
       end else if (reader_state_d == RS_IDLE) begin
         read_access.rvalid <= 0;
       end
@@ -207,6 +218,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
   end
 
   always_comb begin
+    recieve_state_d = RC_IDLE;
     case (recieve_state_q)
       RC_IDLE: begin
         //Go to RC_START_RECIEVED when we get the start bit (0)
@@ -225,7 +237,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
         else recieve_state_d = RC_STOP;
       end
     endcase
-
+    tx_output_state_d = SND_IDLE;
     case (tx_output_state_q)
       SND_IDLE: begin
         //Initiate a send when we have 8 bits ready to go
@@ -256,7 +268,8 @@ WRITE_BUFFER_LENGTH_BYTES * 8
       SND_STOP:      tx_output_state_d = SND_IDLE;
     endcase
 
-
+    read_access.arready = 0;
+    reader_state_d      = RS_IDLE;
     case (reader_state_q)
       RS_IDLE: begin
         //We can accept a read

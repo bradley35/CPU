@@ -116,64 +116,65 @@ package instruction_decode_types;
   } funct3_e;
 
   // Fixed-size 2-D constant table: [opcode][funct3] -> 3 bits
-  localparam funct3_e FUNCT3_FROM_BITS[OPCODE_N][8] = '{
-      BRANCH : '{
-          3'b000 : BEQ,
-          3'b001 : BNE,
-          3'b100 : BLT,
-          3'b101 : BGE,
-          3'b110 : BLTU,
-          3'b111 : BGEU,
-          default: UNDEFINED_F
-      },
-      LOAD : '{
-          3'b000 : LB,
-          3'b001 : LH,
-          3'b010 : LW,
-          3'b100 : LBU,
-          3'b101 : LHU,
-          3'b110 : LWU,
-          3'b011 : LD,
-          default: UNDEFINED_F
-      },
-      STORE : '{3'b000 : SB, 3'b001 : SH, 3'b010 : SW, 3'b011: SD, default: UNDEFINED_F},
-      OP_IMM : '{
-          3'b000 : ADDI,
-          3'b010 : SLTI,
-          3'b011 : SLTIU,
-          3'b100 : XORI,
-          3'b110 : ORI,
-          3'b111 : ANDI,
-          3'b001 : SLLI,
-          3'b101 : SRLI_SRAI,  // SRLI/SRAI share funct3; funct7 disambiguates
-          default: UNDEFINED_F
-      },
-      OP_IMM_32 : '{
-          3'b000 : ADDIW,
-          3'b001 : SLLIW,
-          3'b101 : SRLIW_SRAIW,  // SRLI/SRAI share funct3; funct7 disambiguates
-          default: UNDEFINED_F
-      },
-      OP : '{
-          3'b000 : ADDSUB,  // ADD/SUB share funct3; funct7 disambiguates
-          3'b001 : F_SLL,
-          3'b010 : SLT,
-          3'b011 : SLTU,
-          3'b100 : F_XOR,
-          3'b101 : SRL_SRA,  // SRL/SRA share funct3; funct7 disambiguates
-          3'b110 : F_OR,
-          3'b111 : F_AND,
-          default: UNDEFINED_F
-      },
-      OP_32 : '{
-          3'b000 : ADDSUBW,  // ADD/SUB share funct3; funct7 disambiguates
-          3'b001 : F_SLLW,
-          3'b101 : SRLW_SRAW,  // SRL/SRA share funct3; funct7 disambiguates
-          default: UNDEFINED_F
-      },
-      MISC_MEM : '{3'b001: FENCEI, 3'b000: FENCE, default: UNDEFINED_F},
-      default: '{default: UNDEFINED_F}
-  };
+  // One row = map from 3-bit funct3 to funct3_e
+typedef funct3_e funct3_row_t[8];
+// Whole table = map from opcode to a row
+typedef funct3_row_t funct3_table_t[OPCODE_N];
+
+// Reusable "all-UNDEFINED" row (single-level default is OK)
+localparam funct3_row_t ROW_UNDEF = funct3_row_t'{default: UNDEFINED_F};
+
+// Define concrete rows
+localparam funct3_row_t ROW_BRANCH = '{
+  3'b000: BEQ,  3'b001: BNE,  3'b100: BLT,  3'b101: BGE,
+  3'b110: BLTU, 3'b111: BGEU, default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_LOAD = '{
+  3'b000: LB,  3'b001: LH,  3'b010: LW,  3'b100: LBU,
+  3'b101: LHU, 3'b110: LWU, 3'b011: LD, default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_STORE = '{
+  3'b000: SB, 3'b001: SH, 3'b010: SW, 3'b011: SD, default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_OP_IMM = '{
+  3'b000: ADDI,  3'b010: SLTI,   3'b011: SLTIU, 3'b100: XORI,
+  3'b110: ORI,   3'b111: ANDI,   3'b001: SLLI,  3'b101: SRLI_SRAI,
+  default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_OP_IMM_32 = '{
+  3'b000: ADDIW, 3'b001: SLLIW, 3'b101: SRLIW_SRAIW, default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_OP = '{
+  3'b000: ADDSUB, 3'b001: F_SLL, 3'b010: SLT,  3'b011: SLTU,
+  3'b100: F_XOR,  3'b101: SRL_SRA, 3'b110: F_OR, 3'b111: F_AND,
+  default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_OP_32 = '{
+  3'b000: ADDSUBW, 3'b001: F_SLLW, 3'b101: SRLW_SRAW, default: UNDEFINED_F
+};
+
+localparam funct3_row_t ROW_MISC_MEM = '{
+  3'b001: FENCEI, 3'b000: FENCE, default: UNDEFINED_F
+};
+
+// Assemble the 2-D table; outer default uses a *named row*, not an assignment pattern
+localparam funct3_table_t FUNCT3_FROM_BITS = '{
+  BRANCH   : ROW_BRANCH,
+  LOAD     : ROW_LOAD,
+  STORE    : ROW_STORE,
+  OP_IMM   : ROW_OP_IMM,
+  OP_IMM_32: ROW_OP_IMM_32,
+  OP       : ROW_OP,
+  OP_32    : ROW_OP_32,
+  MISC_MEM : ROW_MISC_MEM,
+  default  : ROW_UNDEF
+};
 
   typedef enum logic [2:0] {
     R,
@@ -229,13 +230,48 @@ package instruction_decode_types;
     UNDEFINED_7
   } funct7_e;
 
-  localparam funct7_e FUNCT7_FROM_BITS[FUNCT3_N][128] = '{
-      SRLI_SRAI: '{7'b0000000: SRLI, 7'b0100000: SRAI, default: UNDEFINED_7},
-      SRLIW_SRAIW: '{7'b0000000: SRLIW, 7'b0100000: SRAIW, default: UNDEFINED_7},
-      ADDSUB: '{7'b0000000: ADD, 7'b0100000: SUB, default: UNDEFINED_7},
-      ADDSUBW: '{7'b0000000: ADDW, 7'b0100000: SUBW, default: UNDEFINED_7},
-      SRL_SRA: '{7'b0000000: F_SRL, 7'b0100000: F_SRA, default: UNDEFINED_7},
-      SRLW_SRAW: '{7'b0000000: F_SRLW, 7'b0100000: F_SRAW, default: UNDEFINED_7},
-      default: '{default: UNDEFINED_7}
-  };
+// One row = map from 7-bit funct7 to funct7_e
+typedef funct7_e funct7_row_t[128];
+// Whole table = map from funct3 bucket to a row
+typedef funct7_row_t funct7_table_t[FUNCT3_N];
+
+// Reusable default row
+localparam funct7_row_t ROW7_UNDEF = funct7_row_t'{default: UNDEFINED_7};
+
+// Concrete rows
+localparam funct7_row_t ROW7_SRLI_SRAI   = '{
+  7'b0000000: SRLI,   7'b0100000: SRAI,   default: UNDEFINED_7
+};
+
+localparam funct7_row_t ROW7_SRLIW_SRAIW = '{
+  7'b0000000: SRLIW,  7'b0100000: SRAIW,  default: UNDEFINED_7
+};
+
+localparam funct7_row_t ROW7_ADDSUB      = '{
+  7'b0000000: ADD,    7'b0100000: SUB,    default: UNDEFINED_7
+};
+
+localparam funct7_row_t ROW7_ADDSUBW     = '{
+  7'b0000000: ADDW,   7'b0100000: SUBW,   default: UNDEFINED_7
+};
+
+localparam funct7_row_t ROW7_SRL_SRA     = '{
+  7'b0000000: F_SRL,  7'b0100000: F_SRA,  default: UNDEFINED_7
+};
+
+localparam funct7_row_t ROW7_SRLW_SRAW   = '{
+  7'b0000000: F_SRLW, 7'b0100000: F_SRAW, default: UNDEFINED_7
+};
+
+// Assemble the 2-D table; outer default points to a named row
+localparam funct7_table_t FUNCT7_FROM_BITS = '{
+  SRLI_SRAI   : ROW7_SRLI_SRAI,
+  SRLIW_SRAIW : ROW7_SRLIW_SRAIW,
+  ADDSUB      : ROW7_ADDSUB,
+  ADDSUBW     : ROW7_ADDSUBW,
+  SRL_SRA     : ROW7_SRL_SRA,
+  SRLW_SRAW   : ROW7_SRLW_SRAW,
+  default     : ROW7_UNDEF
+};
+
 endpackage

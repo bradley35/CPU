@@ -22,18 +22,48 @@ module tp_lvl_tb;
   initial clk = 0;
   always #5 clk = ~clk;
 
+  // UART parameters
+  localparam CLOCK_FREQ_OVER_BAUD_RATE = 72;
+
+  // Task to send one byte over UART
+  task send_uart_byte(input [7:0] data);
+    // Start bit (low)
+    rx = 1'b0;
+    repeat (CLOCK_FREQ_OVER_BAUD_RATE) @(posedge clk);
+
+    // 8 data bits (LSB first)
+    for (int i = 0; i < 8; i++) begin
+      rx = data[i];
+      repeat (CLOCK_FREQ_OVER_BAUD_RATE) @(posedge clk);
+    end
+
+    // Stop bit (high)
+    rx = 1'b1;
+    repeat (CLOCK_FREQ_OVER_BAUD_RATE) @(posedge clk);
+  endtask
+
   // Stimulus
   initial begin
     // Hold RX high (idle)
     rx        = 1'b1;
 
     // Apply reset
-    reset_pin = 1'b0;
+    reset_pin = 1'b0;  // Vivado board has active-low reset
     repeat (5) @(posedge clk);  // hold reset for 5 cycles
     reset_pin = 1'b1;
 
-    // Let it run for 200 cycles
-    repeat (200) @(posedge clk);
+    // Wait for a short delay after reset
+    repeat (20) @(posedge clk);
+
+    // Send "Hello"
+    send_uart_byte("H");
+    send_uart_byte("e");
+    send_uart_byte("l");
+    send_uart_byte("l");
+    send_uart_byte("o");
+
+    // Let it run for some more time
+    repeat (500) @(posedge clk);
 
     $display("Simulation finished after 200 cycles.");
     $finish;

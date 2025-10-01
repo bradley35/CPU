@@ -35,6 +35,23 @@ async def test_single_add(dut):
     checkFinished(dut)
     clock.stop()
 
+@cocotb.test()
+async def infinite_loop(dut):
+    # Load add into memory
+    asm = """
+    top:
+        add   x1, x1, 1
+        jal x0, top
+    ecall
+    """
+    loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
+    clock = Clock(dut.clk, 1, unit="ns")
+    cocotb.start_soon(clock.start())
+    await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
+    clock.stop()
+
+
 # @cocotb.test()
 # async def double_test(dut):
 #     # Load add into memory

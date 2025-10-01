@@ -112,7 +112,7 @@ module instruction_decode (
       //Always accept the branch reset
       waiting_for_branch_reset_q <= waiting_for_branch_reset_d;
 
-      if ((stall_a || stall_b) && !stall_in) begin
+      if ((stall_a || stall_b || waiting_for_branch_reset_q) && !stall_in) begin
         //If we are asserting a stall but not recieving an upstrema one, we need to send dead instructions
         output_valid <= 0;
       end
@@ -314,7 +314,10 @@ module instruction_decode (
     operand_1_d             = register_access.x_regs[rs1];
     operand_1_next_register = rs1;
     operand_2_d             = '0;
+    operand_2_next_register = '0;
     rd_d                    = rd_imm2;
+    misc_op_d               = '0;
+
     unique case (op_type)
       // No Immediate
       // For B type instructions, we are comapring rs1 and rs2

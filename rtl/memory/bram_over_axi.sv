@@ -82,8 +82,13 @@ module bram_over_axi #(
       read_current_beat  <= 0;
       read_state         <= READ_IDLE;
 
-      write_current_beat <= 0;
+      write_current_beat <= '0;
       write_state        <= WRITE_IDLE;
+      araddr_d           <= '0;
+      awaddr_d           <= '0;
+
+      read_slv.rid       <= '0;
+      write_slv.bid      <= '0;
 
     end else begin
       read_state         <= read_state_next;
@@ -145,11 +150,24 @@ module bram_over_axi #(
         read_slv.rlast   = 1;
         if (read_slv.rready) read_state_next = READ_IDLE;
       end
+      default: begin
+        read_slv.rvalid  = 0;
+        read_slv.arready = 1;
+        read_slv.rresp   = 0;
+        read_slv.rlast   = 0;
+      end
+
     endcase
   end
 
   always_comb begin
-    write_state_next = write_state;
+    write_state_next  = write_state;
+    /* Default */
+    write_slv.awready = 1;
+    write_slv.wready  = 1;
+    write_slv.bvalid  = 0;
+    write_slv.bresp   = '0;
+
     case (write_state)
       WRITE_IDLE: begin
         //We can accept both data and an address. Only accept when we have both
@@ -209,6 +227,10 @@ module bram_over_axi #(
         araddr_next            = '0;
         read_current_beat_next = 0;
       end
+      default: begin
+        araddr_next            = '0;
+        read_current_beat_next = 0;
+      end
     endcase
   end
   always_comb begin
@@ -223,6 +245,10 @@ module bram_over_axi #(
         awaddr_next             = '0;
         write_current_beat_next = 0;
       end
+      default: begin
+        awaddr_next             = '0;
+        write_current_beat_next = 0;
+      end
     endcase
   end
 
@@ -234,7 +260,10 @@ module bram_over_axi #(
         initial begin
           $display("Reading block: %s", $sformatf("firmware/build/c%0d.chunk", i));
 `ifdef VIVADO
-          $readmemh($sformatf("../../firmware/build/c%0d.chunk", i), mem_blk);
+          $readmemh(
+              $sformatf(
+                  "/home/bradley/Desktop/Shared/DebianVMSharedDirectory/CPU2/firmware/build/c%0d.chunk",
+                  i), mem_blk);
 `else
           $readmemh($sformatf("firmware/build/c%0d.chunk", i), mem_blk);
 `endif
