@@ -1,4 +1,8 @@
-module bulk_read_multiplexer (
+module bulk_read_multiplexer #(
+  parameter DATA_W    = 64,
+  parameter ADDR_W    = 64,
+  parameter LINE_SIZE = 16
+) (
   bulk_read_interface.slave  if_access,
   bulk_read_interface.slave  data_access,
   bulk_read_interface.master memory_access_out,
@@ -7,18 +11,18 @@ module bulk_read_multiplexer (
   input logic rst
 );
 
-  logic [memory_access_out.ADDR_W - 1:0] req_addr_buffer;
-  logic                                  req_write_buffer;
-  logic [  memory_access_out.DATA_W-1:0] req_wdata_buffer          [memory_access_out.LINE_SIZE];
-  logic [memory_access_out.DATA_W/8-1:0] req_wstrb_buffer          [memory_access_out.LINE_SIZE];
-  logic                                  buffer_valid;
-  logic                                  currently_serving_if;
-  logic                                  currently_serving_if_next;
+  logic [     ADDR_W - 1:0]               req_addr_buffer;
+  logic                                   req_write_buffer;
+  logic [LINE_SIZE - 1 : 0][  DATA_W-1:0] req_wdata_buffer;
+  logic [LINE_SIZE - 1 : 0][DATA_W/8-1:0] req_wstrb_buffer;
+  logic                                   buffer_valid;
+  logic                                   currently_serving_if;
+  logic                                   currently_serving_if_next;
 
-  logic                                  save_data_to_buffer;
-  logic                                  clear_buffer;
+  logic                                   save_data_to_buffer;
+  logic                                   clear_buffer;
 
-  logic                                  data_dumping;
+  logic                                   data_dumping;
   assign data_dumping = data_access.dumping_cache;
 
 

@@ -181,8 +181,12 @@ READ_BUFFER_LENGTH_BYTES * 8
             end else begin
               read_buffer_left_pointer <= lp64 > read_buffer_pointer ? read_buffer_pointer : lp64;
             end
+            for (logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] i = 0; i < 64; i++) begin
+              automatic logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] wrapped_pointer;
+              wrapped_pointer = read_buffer_left_pointer + i >= READ_BUFFER_LENGTH_BYTES * 8 ? read_buffer_left_pointer + i - READ_BUFFER_LENGTH_BYTES * 8 : read_buffer_left_pointer + i;
+              read_access.rdata[i[5:0]] <= read_buffer[wrapped_pointer];
+            end
 
-            read_access.rdata <= read_buffer[read_buffer_left_pointer+:64];
           end
           2'b10: begin
             automatic
@@ -201,9 +205,8 @@ WRITE_BUFFER_LENGTH_BYTES * 8
 
       if (write_access.awvalid && write_access.wready) begin
         write_access.bvalid <= 1;
-        //TODO: Add to write buffer
-        for (logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] i = 0; i < 64; i++) begin
-          automatic logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] wrapped_pointer;
+        for (logic [$clog2(WRITE_BUFFER_LENGTH_BYTES * 8) - 1 : 0] i = 0; i < 64; i++) begin
+          automatic logic [$clog2(WRITE_BUFFER_LENGTH_BYTES * 8) - 1 : 0] wrapped_pointer;
           wrapped_pointer = write_buffer_pointer + i >= WRITE_BUFFER_LENGTH_BYTES * 8 ? write_buffer_pointer + i - WRITE_BUFFER_LENGTH_BYTES * 8 : write_buffer_pointer + i;
           write_buffer[wrapped_pointer] <= write_access.wdata[i[5:0]];
         end

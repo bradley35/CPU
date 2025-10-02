@@ -6,15 +6,15 @@ interface bulk_read_interface #(
 ) ();
 
 
-  logic                req_ready;
-  logic                req_valid;
-  logic [ADDR_W - 1:0] req_addr;
-  logic                req_write;
-  logic [  DATA_W-1:0] req_wdata     [LINE_SIZE];
-  logic [DATA_W/8-1:0] req_wstrb     [LINE_SIZE];
-  logic                resp_valid;
-  logic [  DATA_W-1:0] resp_rdata    [LINE_SIZE];
-  logic                dumping_cache;
+  logic                                   req_ready;
+  logic                                   req_valid;
+  logic [     ADDR_W - 1:0]               req_addr;
+  logic                                   req_write;
+  logic [LINE_SIZE - 1 : 0][  DATA_W-1:0] req_wdata;
+  logic [LINE_SIZE - 1 : 0][DATA_W/8-1:0] req_wstrb;
+  logic                                   resp_valid;
+  logic [LINE_SIZE - 1 : 0][  DATA_W-1:0] resp_rdata;
+  logic                                   dumping_cache;
 
   modport master(
       input req_ready,

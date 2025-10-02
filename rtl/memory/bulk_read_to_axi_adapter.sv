@@ -16,14 +16,14 @@ module bulk_read_to_axi_adapter #(
     AD_WRITE
   } state_t;
 
-  state_t                           current_state;
-  state_t                           next_state;
+  state_t                                         current_state;
+  state_t                                         next_state;
 
-  logic   [$clog2(LINE_SIZE)-1 : 0] current_beat;
-  logic   [$clog2(LINE_SIZE)-1 : 0] next_beat;
+  logic   [$clog2(LINE_SIZE)-1 : 0]               current_beat;
+  logic   [$clog2(LINE_SIZE)-1 : 0]               next_beat;
 
-  logic   [             DATA_W-1:0] read_write_buffer[LINE_SIZE];
-  logic   [           DATA_W/8-1:0] wstrb_buffer     [LINE_SIZE];
+  logic   [      LINE_SIZE - 1 : 0][  DATA_W-1:0] read_write_buffer;
+  logic   [      LINE_SIZE - 1 : 0][DATA_W/8-1:0] wstrb_buffer;
 
 
   assign bulk_read_in.resp_rdata = read_write_buffer;
