@@ -14,7 +14,9 @@ module memory_with_bram_cache #(
 
   parameter int TAG_BITS = ADDR_W - INDEX_BITS - OFFSET_BITS,
 
-  parameter OFFSET_WORD_BITS = OFFSET_BITS - $clog2(DATA_W / 8)
+  parameter OFFSET_WORD_BITS = OFFSET_BITS - $clog2(DATA_W / 8),
+
+  parameter logic HAS_WRITE = 1
 
 ) (
 
@@ -189,10 +191,11 @@ module memory_with_bram_cache #(
         retrieved_source <= RS_NONE;
 
       end
-      replaced_cache_line <= replaced_cache_line_synth;
-      if (replaced_source != RS_NONE) begin
-        replaced_source <= RS_NONE;
-      end
+      //We can get away with this
+      // replaced_cache_line <= replaced_cache_line_synth;
+      // if (replaced_source != RS_NONE) begin
+      //   replaced_source <= RS_NONE;
+      // end
 
       /* Misleading naming to avoid MUXes (i.e. always store and only use value when it is valid) */
       //retrieved_cache_line <= redirect_replacing ? replacing_cache_line : cache_write_line;
@@ -251,19 +254,21 @@ module memory_with_bram_cache #(
       case (effective_state)
         EF_DUMPING: begin
           //Piggy-back off of writeback logic
-          if (!writeback_neccesary) begin
-            if (dump_counter == (INDEX_BITS + 1)'(CACHE_LINES)) begin
-              //That means that the last one (CACHE_LINES-1) was accepted
-              for (int i = 0; i < CACHE_LINES; i++) begin
-                cache_valid_dirty[i] <= '0;
-              end
-            end else begin
+          if (HAS_WRITE) begin
+            if (!writeback_neccesary) begin
+              if (dump_counter == (INDEX_BITS + 1)'(CACHE_LINES)) begin
+                //That means that the last one (CACHE_LINES-1) was accepted
+                for (int i = 0; i < CACHE_LINES; i++) begin
+                  cache_valid_dirty[i] <= '0;
+                end
+              end else begin
 
-              replaced_source <= RS_RAW;
-              replaced_tag    <= cache_tags[dump_counter[INDEX_BITS-1:0]];
-              replaced_meta   <= cache_valid_dirty[dump_counter[INDEX_BITS-1:0]];
-              replaced_index  <= dump_counter[INDEX_BITS-1:0];
-              dump_counter    <= dump_counter + 1;
+                replaced_source <= RS_RAW;
+                replaced_tag    <= cache_tags[dump_counter[INDEX_BITS-1:0]];
+                replaced_meta   <= cache_valid_dirty[dump_counter[INDEX_BITS-1:0]];
+                replaced_index  <= dump_counter[INDEX_BITS-1:0];
+                dump_counter    <= dump_counter + 1;
+              end
             end
           end
         end
@@ -287,7 +292,7 @@ module memory_with_bram_cache #(
         replaced_cache_line_synth = raw_read_line;
       end
       //RS_WRITE: replaced_cache_line_synth = cache_write_line_q;
-      default: replaced_cache_line_synth = replaced_cache_line;
+      default: replaced_cache_line_synth = raw_read_line;
     endcase
   end
 
@@ -374,8 +379,8 @@ module memory_with_bram_cache #(
         //Only transition out when we are done
         if (dump_counter == (INDEX_BITS + 1)'(CACHE_LINES)) begin
           if (memory_access_out.req_ready) next_state = IDLE;
-
         end
+        if (!HAS_WRITE) next_state = IDLE;
         cache_rd_int.arready = 0;
         cache_wr_int.awready = 0;
         cache_wr_int.wready  = cache_wr_int.awready;
@@ -423,6 +428,7 @@ module memory_with_bram_cache #(
     cache_write_line = memory_access_out.resp_rdata;
     retrieved_word =
         retrieved_cache_line_synth[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]];
+    memory_access_out.req_wdata = replaced_cache_line_synth;
     unique case (effective_state)
       //When we miss, send out a request to update the cache so these can become a hit
       EF_READ_MISS, EF_WRITE_MISS: begin
@@ -448,18 +454,19 @@ module memory_with_bram_cache #(
       end
       // On write hit, we can tell the master we are done, but we also need to update the cache storage
       EF_WRITE_HIT: begin
-
-        for (int b = 0; b < DATA_W / 8; b++) begin
-          new_word[b*8+:8] = wstrb_reg[b] ? write_reg[b*8+:8] : retrieved_word[b*8+:8];
+        if (HAS_WRITE) begin
+          for (int b = 0; b < DATA_W / 8; b++) begin
+            new_word[b*8+:8] = wstrb_reg[b] ? write_reg[b*8+:8] : retrieved_word[b*8+:8];
+          end
+          cache_wr_int.bvalid = 1;
+          //cache_write_line = retrieved_cache_line_synth;
+          //cache_write_line[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = new_word;
+          cache_write_line = '{default: new_word};
+          writing_tag = retrieved_tag;
+          writing_meta = '{valid: 1, dirty : 1};
+          cache_write_en[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = 1'b1;
+          cache_write_index = address_reg_parts.index;
         end
-        cache_wr_int.bvalid = 1;
-        //cache_write_line = retrieved_cache_line_synth;
-        //cache_write_line[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = new_word;
-        cache_write_line = '{default: new_word};
-        writing_tag = retrieved_tag;
-        writing_meta = '{valid: 1, dirty : 1};
-        cache_write_en[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = 1'b1;
-        cache_write_index = address_reg_parts.index;
       end
       default: ;
     endcase
@@ -470,7 +477,7 @@ module memory_with_bram_cache #(
       memory_access_out.req_valid = 1;
       memory_access_out.req_addr  = {replaced_tag, replaced_index, (OFFSET_BITS)'('b0)};
       memory_access_out.req_write = 1;
-      memory_access_out.req_wdata = replaced_cache_line_synth;
+
       memory_access_out.req_wstrb = '{default: 8'hFF};
     end
   end

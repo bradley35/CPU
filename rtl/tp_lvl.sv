@@ -87,7 +87,9 @@ module tp_lvl (
     .rst
   );
 
-  memory_with_bram_cache if_cache (
+  memory_with_bram_cache #(
+    .HAS_WRITE(0)
+  ) if_cache (
     .clk,
     .rst,
     .cache_rd_int     (if_memory_interface.rd_slv),
