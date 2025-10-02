@@ -4,12 +4,12 @@ module memory_with_bram_cache #(
 
   // Address breakdown: [ TAG | INDEX | OFFSET ]
   // OFFSET selects a byte within a cache line.
-  parameter int OFFSET_BITS = 7,                // => LINE_BYTES = 128
+  parameter int OFFSET_BITS = 6,                // => LINE_BYTES = 64 = 8 WORDS
   parameter int LINE_BYTES  = 1 << OFFSET_BITS,
 
   parameter int WORDS_PER_LINE = LINE_BYTES / (DATA_W / 8),
 
-  parameter int INDEX_BITS  = 4,               // => 16 lines (toy example)
+  parameter int INDEX_BITS  = 6,               // => 64 lines
   parameter int CACHE_LINES = 1 << INDEX_BITS,
 
   parameter int TAG_BITS = ADDR_W - INDEX_BITS - OFFSET_BITS,
@@ -163,10 +163,8 @@ module memory_with_bram_cache #(
       current_state = IDLE;
       cache_tags            <= '{default: '0};
       cache_valid_dirty     <= '{default: '0};
-      retrieved_cache_line  <= '{default: '0};
       retrieved_tag         <= '0;
       retrieved_meta        <= '0;
-      replaced_cache_line   <= '{default: '0};
       replaced_tag          <= '0;
       replaced_meta         <= '0;
       replaced_index        <= '0;
@@ -186,11 +184,9 @@ module memory_with_bram_cache #(
 
       dumping              <= (dumping | dump_cache) && (next_state != IDLE);
 
-      retrieved_cache_line <= retrieved_cache_line_synth;
-      if (retrieved_source != RS_NONE) begin
-        retrieved_source <= RS_NONE;
-
-      end
+      retrieved_cache_line <= memory_access_out.resp_rdata;
+      //Set to raw as we will continue grabbing the same address anyway and it will now be correct
+      retrieved_source     <= RS_RAW;
       //We can get away with this
       // replaced_cache_line <= replaced_cache_line_synth;
       // if (replaced_source != RS_NONE) begin
@@ -222,7 +218,7 @@ module memory_with_bram_cache #(
             //We already sent the memory request
             if (memory_access_out.resp_valid) begin
               //Unavoidable MUX
-              retrieved_cache_line <= memory_access_out.resp_rdata;
+              //retrieved_cache_line <= memory_access_out.resp_rdata;
               retrieved_source <= RS_NONE;
 
               //replaced_cache_line <= retrieved_cache_line_synth;
@@ -270,6 +266,10 @@ module memory_with_bram_cache #(
                 dump_counter    <= dump_counter + 1;
               end
             end
+          end else begin
+            for (int i = 0; i < CACHE_LINES; i++) begin
+              cache_valid_dirty[i] <= '0;
+            end
           end
         end
         default: dump_counter <= 0;
@@ -287,13 +287,14 @@ module memory_with_bram_cache #(
       RS_WRITE: retrieved_cache_line_synth = cache_write_line_q;
       default:  retrieved_cache_line_synth = retrieved_cache_line;
     endcase
-    case (replaced_source)
-      RS_RAW: begin
-        replaced_cache_line_synth = raw_read_line;
-      end
-      //RS_WRITE: replaced_cache_line_synth = cache_write_line_q;
-      default: replaced_cache_line_synth = raw_read_line;
-    endcase
+    replaced_cache_line_synth = raw_read_line;
+    // case (replaced_source)
+    //   RS_RAW: begin
+    //     replaced_cache_line_synth = raw_read_line;
+    //   end
+    //   //RS_WRITE: replaced_cache_line_synth = cache_write_line_q;
+    //   default: replaced_cache_line_synth = raw_read_line;
+    // endcase
   end
 
   always_comb begin

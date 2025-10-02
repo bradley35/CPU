@@ -1,5 +1,5 @@
 module uart_over_axi4lite #(
-  parameter CLOCK_FREQ_OVER_BAUD_RATE = 72,
+  parameter CLOCK_FREQ_OVER_BAUD_RATE = 1250,
   parameter READ_BUFFER_LENGTH_BYTES  = 64,
   parameter WRITE_BUFFER_LENGTH_BYTES = 64,
   parameter UART_FRAME_BITS           = 8

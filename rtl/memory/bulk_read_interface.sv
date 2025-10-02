@@ -1,7 +1,7 @@
 interface bulk_read_interface #(
   parameter DATA_W    = 64,
   parameter ADDR_W    = 64,
-  parameter LINE_SIZE = 16
+  parameter LINE_SIZE = 8
 
 ) ();
 

@@ -7,7 +7,7 @@
 module bram_over_axi #(
   parameter int MEMORY_SIZE_BYTES       = 4096,
   parameter int MEMORY_BLOCK_MAX_ACCESS = 72,
-  parameter int FIXED_NUMBER_OF_BEATS   = 16,
+  parameter int FIXED_NUMBER_OF_BEATS   = 8,
   parameter bit DO_INIT                 = 1,
   parameter int DATA_W                  = 64,
   parameter int ADDR_W                  = 64

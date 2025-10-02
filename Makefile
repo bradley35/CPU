@@ -17,7 +17,7 @@ random_mem:
 uart:
 	$(MAKE) results.xml TOPLEVEL=uart_tb MODULE=tests.uart.uart_test
 cache_memory:
-	$(MAKE) results.xml TOPLEVEL=bram_over_axi_tb MODULE=tests.memory.test_bram_over_axi
+	$(MAKE) results.xml TOPLEVEL=bram_over_axi_tb MODULE=tests.memory.cache_dump_test
 all: tp_lvl random_no_mem random_mem
 .PHONY: tp_lvl random_no_mem random_mem uart all
 

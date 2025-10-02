@@ -1,5 +1,5 @@
 module bulk_read_to_axi_adapter #(
-  parameter logic [7:0] LINE_SIZE = 16,
+  parameter logic [7:0] LINE_SIZE = 8,
   parameter int         DATA_W    = 64
 ) (
         bulk_read_interface.slave bulk_read_in,

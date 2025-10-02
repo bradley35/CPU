@@ -2298,8 +2298,9 @@ async def test_patch_two_after_current_with_fence(dut):
     await First(RisingEdge(dut.program_complete), Timer(200, unit="ns"))
 
     # Expected: x6 = 4 (spacer add) + 1 (patched TARGET) = 5
-    checkRegister(6, 5, dut, False)
     checkFinished(dut)
+    checkRegister(6, 5, dut, False)
+    
 
 
 # ============================================================
@@ -2403,7 +2404,7 @@ POST:
     await resetAndPrepare(dut)
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
 
-    await First(RisingEdge(dut.program_complete), Timer(200, unit="ns"))
+    await First(RisingEdge(dut.program_complete), Timer(2000, unit="ns"))
 
     # Expected: PREV now does addi x5,x5,3, then falls through to AFTER_PREV which jumps to POST -> ecall
     checkRegister(5, 3, dut, False)

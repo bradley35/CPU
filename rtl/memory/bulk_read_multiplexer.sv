@@ -1,7 +1,7 @@
 module bulk_read_multiplexer #(
   parameter DATA_W    = 64,
   parameter ADDR_W    = 64,
-  parameter LINE_SIZE = 16
+  parameter LINE_SIZE = 8
 ) (
   bulk_read_interface.slave  if_access,
   bulk_read_interface.slave  data_access,
