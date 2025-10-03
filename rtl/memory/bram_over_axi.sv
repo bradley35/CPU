@@ -30,7 +30,7 @@ module bram_over_axi #(
   endfunction
   parameter int MEMORY_ADDRESS_BIT_LENGTH = $clog2(MEMORY_SIZE_BYTES / (DATA_W / 8));
   parameter int BLOCK_SIZE = max_div_le(MEMORY_BLOCK_MAX_ACCESS, DATA_W);
-  //Supposing DATA_W is a power of 2, NUMBER_OF_BLOCKS also be a power of 2
+  //Supposing DATA_W is a power of 2, NUMBER_OF_BLOCKS also will be a power of 2
   parameter int NUMBER_OF_BLOCKS = DATA_W / BLOCK_SIZE;
   parameter int ENTRIES_PER_BLOCK = int'($ceil(
       MEMORY_SIZE_BYTES * 8 / NUMBER_OF_BLOCKS / BLOCK_SIZE

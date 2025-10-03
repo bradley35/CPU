@@ -1,3 +1,7 @@
+/*
+Allows two caches to read/write from the same actual memory instance.
+*/
+
 module bulk_read_multiplexer #(
   parameter DATA_W    = 64,
   parameter ADDR_W    = 64,

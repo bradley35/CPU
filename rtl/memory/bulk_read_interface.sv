@@ -1,3 +1,7 @@
+/*
+Interface for reading entire cache lines at once from memory
+*/
+
 interface bulk_read_interface #(
   parameter DATA_W    = 64,
   parameter ADDR_W    = 64,

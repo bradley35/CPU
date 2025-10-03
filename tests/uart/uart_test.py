@@ -18,6 +18,8 @@ async def _reset(dut, cycles: int = 2):
 def _as_bytes(x):
     return x if isinstance(x, (bytes, bytearray)) else x.encode("utf-8")
 
+# Quick and dirty test requiring manual inspection of the output
+# Not an extensive test, just meant for debugging
 @cocotb.test()
 async def uart_test(dut):
     """
@@ -50,7 +52,7 @@ async def uart_test(dut):
     print(output4t.data)
     output5 = await axi.read_dword(0xFFFFFFFFFFFFF000)
     print(output5)
-    await uart_source.write(b'Yo')
+    await uart_source.write(b'AB')
     await uart_source.wait()
     output6 = await axi.read_dword(0xFFFFFFFFFFFFF000)
     print(output6)
@@ -63,23 +65,3 @@ async def uart_test(dut):
     await uart_source.wait()
     output9 = await uart_sink.read()
     print(output9)
-
-
-
-
-    # output10 = await uart_sink.read(8)
-    # print(output10)
-    # output11 = await uart_sink.read(8)
-    # print(output11)
-    # # Same line: [0x000..0x07F]; pick aligned base
-    # base = 0x020  # 32, 8-byte aligned and clearly inside the line
-    # part1 = _as_bytes("Hello ")   # 6B
-    # part2 = _as_bytes("World!!!") # 8B (already a full beat)
-
-    # # Compose expected and pad/align writes
-    # expected = part1 + part2
-    # await write_aligned(axi, base, expected)  # will issue two aligned writes (total 16B)
-
-    # # Read back exactly len(expected), but using aligned beats
-    # got = await read_aligned(axi, base, len(expected))
-    # _assert_eq_bytes(got, expected, where="same-line aligned R/W")

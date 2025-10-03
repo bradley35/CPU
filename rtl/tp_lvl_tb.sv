@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+/* AI generated testbench to send UART and check for response */
+//Only used for debugging in Vivado SIM.
 
 module tp_lvl_tb;
 

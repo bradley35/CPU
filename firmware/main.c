@@ -1,5 +1,8 @@
 #include "linker_header.h"
 const char *TEXT = "You wrote:\0\0\0\0\0\0";
+
+/* Test firmware to read and write from UART. Demonstrates core functionality. */
+
 int read_line_to_buffer(char *buffer)
 {
     int buf_count = 0;
@@ -27,7 +30,6 @@ int read_line_to_buffer(char *buffer)
 }
 void main()
 {
-    //__asm__ __volatile__("li x10, 2" ::: "x10");
     for (;;)
     {
         char small_buffer[512];
@@ -42,11 +44,10 @@ void main()
         }
     }
 }
-
+/* Set up stack pointer before any other code runs. */
 __attribute__((section(".text._start"), naked, noreturn, used)) void _start(void)
 {
     __asm__ __volatile__(
-        "  la   sp, _stack_pointer\n" // sp = &_stack_pointer
-        "  tail main\n"               // tail-call main, never returns
-    );
+        "  la   sp, _stack_pointer\n"
+        "  tail main\n");
 }

@@ -130,13 +130,6 @@ module memoryrw (
     if (!ex_is_mem_addr_q && ex_mem_addr_is_write_q) dump_cache = 1;
     else dump_cache = 0;
     result_valid_d  = ex_is_mem_addr_q ? mem_rd.rvalid : ex_result_valid_q;
-    // if (ex_is_mem_addr_q)
-    //   $display(
-    //       "Offset is: %d, going from %h to %h",
-    //       offset,
-    //       mem_interface.resp_rdata,
-    //       mem_interface.resp_rdata >> (offset * 8)
-    //   );
     raw_result_next = ex_is_mem_addr_q ? mem_rd.rdata >> (offset * 8) : ex_result_q;
     case (ex_load_store_variant_q)
       LS_LB:   trunc_result_next = 64'(signed'(raw_result_next[7:0]));
@@ -149,7 +142,6 @@ module memoryrw (
       default: trunc_result_next = raw_result_next;
     endcase
 
-    //For stores, send the store address though in 
   end
 
 endmodule

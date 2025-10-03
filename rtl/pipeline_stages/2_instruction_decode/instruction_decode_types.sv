@@ -2,7 +2,6 @@ package instruction_decode_types;
 
   typedef logic [63:0] double_word;
 
-  /* Output Types */
   typedef enum logic [2:0] {
     ALU,
     MEM,
@@ -40,7 +39,6 @@ package instruction_decode_types;
   } alu_op_e;
 
 
-  /* Instruction Decoding Helper Types */
   typedef enum logic [6:0] {
     UNDEFINED = 7'b0000000,
     LOAD      = 7'b0000011,
@@ -66,7 +64,7 @@ package instruction_decode_types;
     JAL       = 7'b1101111,
     SYSTEM    = 7'b1110011,
     OP_VE     = 7'b1110111,
-    OPCODE_N                 // <-- count sentinel (last)
+    OPCODE_N
   } opcode_e;
 
   typedef enum logic [5:0] {
@@ -113,19 +111,17 @@ package instruction_decode_types;
     FENCEI,
     F_JALR,
     UNDEFINED_F,
-    FUNCT3_N      // <-- count sentinel (last)
+    FUNCT3_N
   } funct3_e;
 
-  // Fixed-size 2-D constant table: [opcode][funct3] -> 3 bits
-  // One row = map from 3-bit funct3 to funct3_e
+  // Row = map from bits to funct3_e
   typedef funct3_e funct3_row_t[8];
-  // Whole table = map from opcode to a row
+
+  // Table = map from opcode to a row
   typedef funct3_row_t funct3_table_t[OPCODE_N];
 
-  // Reusable "all-UNDEFINED" row (single-level default is OK)
   localparam funct3_row_t ROW_UNDEF = funct3_row_t'{default: UNDEFINED_F};
 
-  // Define concrete rows
   localparam funct3_row_t ROW_BRANCH = '{
       3'b000: BEQ,
       3'b001: BNE,
@@ -196,7 +192,6 @@ package instruction_decode_types;
   localparam funct3_row_t ROW_MISC_MEM = '{3'b001: FENCEI, 3'b000: FENCE, default: UNDEFINED_F};
   localparam funct3_row_t ROW_JALR = '{default: F_JALR};
 
-  // Assemble the 2-D table; outer default uses a *named row*, not an assignment pattern
   localparam funct3_table_t FUNCT3_FROM_BITS = '{
       BRANCH   : ROW_BRANCH,
       LOAD     : ROW_LOAD,
@@ -264,15 +259,11 @@ package instruction_decode_types;
     UNDEFINED_7
   } funct7_e;
 
-  // One row = map from 7-bit funct7 to funct7_e
   typedef funct7_e funct7_row_t[128];
-  // Whole table = map from funct3 bucket to a row
   typedef funct7_row_t funct7_table_t[FUNCT3_N];
 
-  // Reusable default row
   localparam funct7_row_t ROW7_UNDEF = funct7_row_t'{default: UNDEFINED_7};
 
-  // Concrete rows
   localparam funct7_row_t ROW7_SRLI_SRAI = '{
       7'b0000000: SRLI,
       7'b0100000: SRAI,
@@ -305,7 +296,6 @@ package instruction_decode_types;
       default: UNDEFINED_7
   };
 
-  // Assemble the 2-D table; outer default points to a named row
   localparam funct7_table_t FUNCT7_FROM_BITS = '{
       SRLI_SRAI   : ROW7_SRLI_SRAI,
       SRLIW_SRAIW : ROW7_SRLIW_SRAIW,

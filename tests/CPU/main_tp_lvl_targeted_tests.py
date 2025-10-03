@@ -52,29 +52,6 @@ async def infinite_loop(dut):
     clock.stop()
 
 
-# @cocotb.test()
-# async def double_test(dut):
-#     # Load add into memory
-#     asm = """
-#     add   x3, x1, x2
-#     ecall
-#     """
-#     loadAsmToMemory(asm, dut)
-#     await resetAndPrepare(dut)
-#     loadRegisters([0, 1535, 8462, 5473, 9], dut)
-#     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
-#     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
-#     checkRegister(3, 1535 + 8462, dut)
-#     checkFinished(dut)
-#     loadAsmToMemory(asm, dut)
-
-#     await resetAndPrepare(dut)
-#     loadRegisters([0, 1535, 8462, 5473, 9], dut)
-#     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
-#     await First(RisingEdge(dut.program_complete), Timer(100, unit="ns"))
-#     checkRegister(3, 1535 + 8462, dut)
-#     checkFinished(dut)
-
 @cocotb.test()
 async def test_single_sub(dut):
     # Load add into memory

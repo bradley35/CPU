@@ -26,9 +26,6 @@ module instruction_fetch (
 
 );
 
-  // initial begin
-  //   if (mem_rd.DATA_W != 32) $error("IF requires 32 bit memory access");
-  // end
 
   /* Define wires */
   typedef logic [63:0] double_word;
@@ -74,8 +71,8 @@ module instruction_fetch (
     pc_if_write_en = (pc_if_write != pc) && !stall;
 
     //Always request the next pc. Do it here so that it gets latched in the memory controller
-    //This cannot depend on the stall bit for timing reasons
-    mem_rd.araddr  = branch_reset_in ? branch_pc : pc_if_write;  //pc_next;
+    //This cannot depend on the stall bit for timing reasons. Otherwise, we would set to pc_next
+    mem_rd.araddr  = branch_reset_in ? branch_pc : pc_if_write;
     //Our request is always valid, since we need a read every cycle
     mem_rd.arvalid = 1 && !rst;
     mem_rd.rready  = 1;

@@ -145,7 +145,6 @@ module memory_with_bram_cache #(
   logic                                            can_accept_request;
   logic unsigned          [        INDEX_BITS : 0] dump_counter;
 
-  //These should live in BRAM and therefore be accessed behind always_ff
   (* RAM_STYLE = "block" *)tag_t                                            cache_tags                 [CACHE_LINES];
   logic unsigned          [    INDEX_BITS - 1 : 0] requested_tag;
   logic                                            tag_req_en;
@@ -200,21 +199,15 @@ module memory_with_bram_cache #(
     end else begin
       current_state           <= next_state;
       cache_write_line_q      <= cache_write_line;
-      //If the next state is idle, we must be done dumping.
 
+      //If the next state is idle, we must be done dumping.
       dumping                 <= (dumping | dump_cache) && (next_state != IDLE);
 
       retrieved_cache_line    <= memory_access_out.resp_rdata;
+
       //Set to raw as we will continue grabbing the same address anyway and it will now be correct
       retrieved_source        <= RS_RAW;
-      //We can get away with this
-      // replaced_cache_line <= replaced_cache_line_synth;
-      // if (replaced_source != RS_NONE) begin
-      //   replaced_source <= RS_NONE;
-      // end
 
-      /* Misleading naming to avoid MUXes (i.e. always store and only use value when it is valid) */
-      //retrieved_cache_line <= redirect_replacing ? replacing_cache_line : cache_write_line;
       //Any time we CAN accept, assume we did for speed
       use_address_tag_instead <= 0;
       if (can_accept_request) begin
@@ -238,11 +231,7 @@ module memory_with_bram_cache #(
           if (memory_req_dispatched) begin
             //We already sent the memory request
             if (memory_access_out.resp_valid) begin
-              //Unavoidable MUX
-              //retrieved_cache_line <= memory_access_out.resp_rdata;
               retrieved_source <= RS_NONE;
-
-              //replaced_cache_line <= retrieved_cache_line_synth;
               //Always grab the clean version from BRAM
               replaced_source <= RS_RAW;
               use_address_tag_instead <= 1;
@@ -307,13 +296,6 @@ module memory_with_bram_cache #(
       default:  retrieved_cache_line_synth = retrieved_cache_line;
     endcase
     replaced_cache_line_synth = raw_read_line;
-    // case (replaced_source)
-    //   RS_RAW: begin
-    //     replaced_cache_line_synth = raw_read_line;
-    //   end
-    //   //RS_WRITE: replaced_cache_line_synth = cache_write_line_q;
-    //   default: replaced_cache_line_synth = raw_read_line;
-    // endcase
   end
 
   always_comb begin
@@ -493,8 +475,6 @@ module memory_with_bram_cache #(
             new_word[b*8+:8] = wstrb_reg[b] ? write_reg[b*8+:8] : retrieved_word[b*8+:8];
           end
           cache_wr_int.bvalid = 1;
-          //cache_write_line = retrieved_cache_line_synth;
-          //cache_write_line[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = new_word;
           cache_write_line = '{default: new_word};
           writing_tag = use_address_tag_instead ? address_reg_parts.tag : retrieved_tag;
           writing_meta = '{valid: 1, dirty : 1};

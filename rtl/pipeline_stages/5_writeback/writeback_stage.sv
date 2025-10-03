@@ -54,7 +54,6 @@ module writeback_stage (
 
     register_write_en       = write_to_rd && mem_result_valid;
     register_to_write       = rd;
-    //Since there is very little logic in this step, putting in an adder does not seem like an issue
     register_value_to_write = result_is_branch_addr ? mem_result_plus_4 : mem_result;
 
 

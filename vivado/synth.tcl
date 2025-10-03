@@ -1,3 +1,5 @@
+#Synthesize. Uncomment final lines as needed to achieve needed timing
+
 # synth.tcl
 set PART xc7s25csga324     ;
 set TOP  tp_lvl     ;# your desired top

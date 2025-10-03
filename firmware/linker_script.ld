@@ -4,7 +4,7 @@ PROVIDE(read_only_uart_queue_next = 0xFFFFFFFFFFFFF008);
 PROVIDE(read_only_bytes_in_uart_write_queue = 0xFFFFFFFFFFFFF010);
 PROVIDE(write_only_to_uart = 0xFFFFFFFFFFFFF018);
 
-/* Define 4 KiB bootloader memory region */
+/* 4 KiB region. Will be for Bootloader, currently is where all code lives */
 MEMORY
 {
     BOOT (rxw) : ORIGIN = 0x00000000, LENGTH = 4K

@@ -1,3 +1,8 @@
+/*
+Connects from the multiplexer (over the bulk_read_interface)
+to the actual memory (over AXI)
+*/
+
 module bulk_read_to_axi_adapter #(
   parameter logic [7:0] LINE_SIZE = 8,
   parameter int         DATA_W    = 64

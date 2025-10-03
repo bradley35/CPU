@@ -2,7 +2,7 @@
 //! ```cargo
 //! [dependencies]
 //! ```
-// Single file, no Cargo.toml needed.
+// Single file, no Cargo.toml needed. Cargo.toml is kept for VSCode Intellisense
 use std::env;
 use std::fs;
 use std::io::BufReader;
@@ -12,7 +12,6 @@ use std::path::Path;
 
 fn main() -> Result<(), std::io::Error> {
     let args: Vec<String> = env::args().collect();
-    //Default: 16
     let bin = args.get(1).expect("Bin must be provided");
     if bin.len() < 1 {
         panic!("Bin must be provided");
@@ -22,7 +21,6 @@ fn main() -> Result<(), std::io::Error> {
         .and_then(|x| x.parse::<usize>().ok())
         .unwrap_or(16);
     println!("Splitting {} into {:0} blocks", bin, number_of_blocks);
-    //Delete existing split files
     let path = Path::new(bin).parent().unwrap_or(Path::new("."));
     let existing_files = fs::read_dir(path)?;
     existing_files
@@ -36,7 +34,6 @@ fn main() -> Result<(), std::io::Error> {
             }
         })
         .for_each(|f| {
-            //println!("Deleting file {}", f.as_os_str().to_str().unwrap());
             fs::remove_file(f).expect("Error removing file");
         });
 
@@ -46,7 +43,6 @@ fn main() -> Result<(), std::io::Error> {
             fs::File::create_new(file_path).expect("Error opening file")
         })
         .collect();
-    //Read the bin file
     let bin_file = fs::File::open(bin).expect("File could not be opened");
     let mut reader = BufReader::new(bin_file);
     let mut dw_buffer = [0u8; 8];
@@ -59,7 +55,6 @@ fn main() -> Result<(), std::io::Error> {
             u64::from_le_bytes(dw_buffer)
         )
         .expect("Write Error");
-        //Clear the buffer
         dw_buffer.fill(0);
         current_file = current_file + 1;
         if current_file == number_of_blocks {

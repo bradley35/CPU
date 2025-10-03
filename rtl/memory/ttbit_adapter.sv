@@ -1,3 +1,6 @@
+/*
+Adapter for instruction fetch to see a 32bit data-size
+*/
 module ttbit_adapter (
   input logic                    clk,
   input logic                    rst,
