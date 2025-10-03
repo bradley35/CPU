@@ -11,7 +11,7 @@ Personal project to push knowledge of computer architecture and learn SystemVeri
 * Flexible Memory backing  
   - Communication with main RAM is over AXI so that it can easily be swapped with vendor DRAM IP to synthesize for FPGA
   - Currently built to infer BRAM for main-memory
-* Can communicate over UART via memory mapped io.
+* Can communicate over UART via memory mapped io
  
 Schematic (I need to redraw this manually to simplify, but I thought the image was cool nonetheless):
 ![my_schematic](https://github.com/user-attachments/assets/0cecf210-64c5-40ba-ab97-f537a6d20a61)
