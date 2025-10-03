@@ -35,7 +35,7 @@ app: $(CHUNKFILES)
 $(CHUNKFILES): $(BUILD)/.chunks.stamp
 
 $(BUILD)/.chunks.stamp: $(BUILD)/app.bin | $(BUILD)
-	./bin_seperator/bin_seperator.rs $(BUILD)/app.bin $(MEMORY_CHUNKS) $(BUILD)
+	./bin_separator/bin_separator.rs $(BUILD)/app.bin $(MEMORY_CHUNKS) $(BUILD)
 	@touch $@
 
 $(BUILD)/app.elf: $(OBJS) $(LDSCRIPT) | $(BUILD)

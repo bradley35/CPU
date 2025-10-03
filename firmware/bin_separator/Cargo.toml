@@ -1,0 +1,10 @@
+[package]
+name = "bin_separator"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "bin_separator"
+path = "bin_separator.rs"
+
+[dependencies]

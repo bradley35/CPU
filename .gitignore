@@ -7,7 +7,7 @@ __pycache__/
 sim_build/
 **/.DS_Store
 firmware/build/
-firmware/bin_seperator/target/
+firmware/bin_separator/target/
 vivado/.Xil/
 vivado/**/*.log
 vivado/**/*.jou
