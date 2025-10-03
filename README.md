@@ -55,7 +55,7 @@ project/
 ├── firmware/               — C code, linker script, and compilation tools
 └── vivado/                 — TCL scripts, timing reports, and FPGA synthesis files
 ```
-Note on AI: I did not use AI to write any of the RTL code. However, I found that ChatGPT is very good at writing tests and as such, I used it for three things:
+Note on AI: I did not use AI to write the RTL code. However, I found that ChatGPT is very good at writing tests and as such, I used it for three things:
 a) writing tests based on a description (i.e. jump into a branch), modelled after ones I had already written,
 b) helping to write the randomized fuzz tests and,
 c) writing quick SystemVerilog tests to pinpoint discrepancies between Verilator and Vivado (as seen in the `top_lvl_tb.sv` file).
