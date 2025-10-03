@@ -23,7 +23,7 @@ module tp_lvl_tb;
   always #5 clk = ~clk;
 
   // UART parameters
-  localparam CLOCK_FREQ_OVER_BAUD_RATE = 72;
+  localparam CLOCK_FREQ_OVER_BAUD_RATE = 1250;
 
   // Task to send one byte over UART
   task send_uart_byte(input [7:0] data);
@@ -61,9 +61,10 @@ module tp_lvl_tb;
     send_uart_byte("l");
     send_uart_byte("l");
     send_uart_byte("o");
+    send_uart_byte("\n");
 
     // Let it run for some more time
-    repeat (500) @(posedge clk);
+    repeat (200000) @(posedge clk);
 
     $display("Simulation finished after 200 cycles.");
     $finish;

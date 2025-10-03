@@ -1,5 +1,5 @@
 module uart_over_axi4lite #(
-  parameter CLOCK_FREQ_OVER_BAUD_RATE = 1250,
+  parameter CLOCK_FREQ_OVER_BAUD_RATE = 868,
   parameter READ_BUFFER_LENGTH_BYTES  = 64,
   parameter WRITE_BUFFER_LENGTH_BYTES = 64,
   parameter UART_FRAME_BITS           = 8
@@ -13,6 +13,14 @@ module uart_over_axi4lite #(
          axil_interface_if.rd_slv read_access,
          axil_interface_if.wr_slv write_access
 );
+  /* verilator lint_off UNSIGNED */
+  localparam READ_BUFFER_LENGTH_BYTES_TRUNC = READ_BUFFER_LENGTH_BYTES[$clog2(
+      READ_BUFFER_LENGTH_BYTES
+  )-1 : 0];
+
+  localparam WRITE_BUFFER_LENGTH_BYTES_TRUNC = WRITE_BUFFER_LENGTH_BYTES[$clog2(
+      WRITE_BUFFER_LENGTH_BYTES
+  )-1 : 0];
 
   typedef enum {
     RC_IDLE,
@@ -51,33 +59,41 @@ Outline:
 
 */
 
-  logic                                                           can_accept_write;
+  logic can_accept_write;
 
+  logic [$clog2(
+WRITE_BUFFER_LENGTH_BYTES
+) : 0] debug_difference;
 
-  reader_state_e                                                  reader_state_d;
-  reader_state_e                                                  reader_state_q;
+  reader_state_e reader_state_d;
+  reader_state_e reader_state_q;
 
-  writer_state_e                                                  writer_state_d;
-  writer_state_e                                                  writer_state_q;
+  writer_state_e writer_state_d;
+  writer_state_e writer_state_q;
 
-  send_state_e                                                    tx_output_state_d;
-  send_state_e                                                    tx_output_state_q;
+  send_state_e tx_output_state_d;
+  send_state_e tx_output_state_q;
 
-  recieve_state_e                                                 recieve_state_d;
-  recieve_state_e                                                 recieve_state_q;
+  recieve_state_e recieve_state_d;
+  recieve_state_e recieve_state_q;
 
-  logic           [        $clog2(CLOCK_FREQ_OVER_BAUD_RATE) : 0] rx_counter;
-  logic           [        $clog2(CLOCK_FREQ_OVER_BAUD_RATE) : 0] tx_counter;
-  logic           [              $clog2(UART_FRAME_BITS) - 1 : 0] rx_bit_counter;
-  logic           [              $clog2(UART_FRAME_BITS) - 1 : 0] tx_bit_counter;
+  logic [$clog2(CLOCK_FREQ_OVER_BAUD_RATE) - 1 : 0] rx_counter;
+  logic [$clog2(CLOCK_FREQ_OVER_BAUD_RATE) - 1:0] tx_counter;
+  logic [$clog2(UART_FRAME_BITS) - 1 : 0] rx_bit_counter;
+  logic [$clog2(UART_FRAME_BITS) - 1 : 0] tx_bit_counter;
 
-  logic           [   $clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1:0] read_buffer_pointer;
-  logic           [ $clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] read_buffer_left_pointer;
-  logic           [         READ_BUFFER_LENGTH_BYTES * 8 - 1 : 0] read_buffer;
+  logic [$clog2(READ_BUFFER_LENGTH_BYTES) - 1:0] read_buffer_pointer;
+  logic [$clog2(READ_BUFFER_LENGTH_BYTES) - 1 : 0] read_buffer_left_pointer;
+  logic [7:0] partial_read;
+  logic partial_committed;
+  logic [7 : 0] read_buffer[READ_BUFFER_LENGTH_BYTES];
+  logic read_buffer_full;
 
-  logic           [  $clog2(WRITE_BUFFER_LENGTH_BYTES * 8) - 1:0] write_buffer_pointer;
-  logic           [$clog2(WRITE_BUFFER_LENGTH_BYTES * 8) - 1 : 0] write_buffer_left_pointer;
-  logic           [        WRITE_BUFFER_LENGTH_BYTES * 8 - 1 : 0] write_buffer;
+  logic [$clog2(WRITE_BUFFER_LENGTH_BYTES) - 1 : 0] write_buffer_pointer;
+  logic [$clog2(WRITE_BUFFER_LENGTH_BYTES) - 1 : 0] write_buffer_left_pointer;
+  logic [7:0] partial_write;
+  logic [7 : 0] write_buffer[WRITE_BUFFER_LENGTH_BYTES];
+  logic write_buffer_full;
 
 
   // RX input synchronizer
@@ -98,11 +114,12 @@ Outline:
 
       read_buffer_pointer       <= '0;
       read_buffer_left_pointer  <= '0;
-      read_buffer               <= '0;
 
       write_buffer_pointer      <= '0;
       write_buffer_left_pointer <= '0;
-      write_buffer              <= '0;
+
+      read_buffer_full          <= '0;
+      write_buffer_full         <= '0;
     end else begin
       reader_state_q <= reader_state_d;
       case (recieve_state_q)
@@ -117,23 +134,34 @@ Outline:
           if (rx_counter == 0) begin
             recieve_state_q <= recieve_state_d;
           end
+          partial_committed <= 0;
         end
         RC_RECIEVING_DATA: begin
           rx_counter <= rx_counter + 1 == CLOCK_FREQ_OVER_BAUD_RATE ? 0 : rx_counter + 1;
           if (rx_counter == 0) begin
-            recieve_state_q <= recieve_state_d;
-            rx_bit_counter  <= rx_bit_counter + 1;
-            //Store the recieved bit
-            //$display("Reading bit: %b", rx);
-            //$display("Counter is: %d", read_buffer_pointer); 
-            if (read_buffer_pointer != read_buffer_left_pointer - 1) begin
-              read_buffer[read_buffer_pointer[$clog2(READ_BUFFER_LENGTH_BYTES*8)-1 : 0]] <= rx;
-              read_buffer_pointer <= read_buffer_pointer + 1 == READ_BUFFER_LENGTH_BYTES*8 ? 0 : read_buffer_pointer + 1;
-            end
-
-          end  //else $display("Skipping this cycle");
+            recieve_state_q              <= recieve_state_d;
+            rx_bit_counter               <= rx_bit_counter + 1;
+            partial_read[rx_bit_counter] <= rx_s;
+          end
         end
-        RC_STOP: recieve_state_q <= recieve_state_d;
+        RC_STOP: begin
+          recieve_state_q <= recieve_state_d;
+          //Commit the partial read
+          if (!read_buffer_full && !partial_committed) begin
+            automatic
+            logic [$clog2(
+READ_BUFFER_LENGTH_BYTES
+) - 1 : 0]
+            plus_one = read_buffer_pointer + 1;
+            read_buffer[read_buffer_pointer] <= partial_read;
+            read_buffer_pointer <= (plus_one == READ_BUFFER_LENGTH_BYTES_TRUNC) ? 0 : plus_one;
+            // $display("Old pointer %d, new pointer %d, left pointer %d", read_buffer_pointer,
+            //          (plus_one == READ_BUFFER_LENGTH_BYTES_TRUNC) ? 0 : plus_one,
+            //          read_buffer_left_pointer);
+            read_buffer_full    <=  (read_buffer_left_pointer == plus_one) || (read_buffer_left_pointer == 0 && (plus_one == READ_BUFFER_LENGTH_BYTES_TRUNC));
+            partial_committed <= 1'b1;
+          end
+        end
       endcase
       //Only update the write_buffer state on counter intervals
       tx_counter <= tx_counter + 1 == CLOCK_FREQ_OVER_BAUD_RATE ? 0 : tx_counter + 1;
@@ -143,14 +171,21 @@ Outline:
           SND_START_BIT: tx_bit_counter <= 0;
           SND_DATA:      tx_bit_counter <= tx_bit_counter + 1;
         endcase
-        case (tx_output_state_d)
-          SND_IDLE:      tx <= 1;
-          SND_START_BIT: tx <= 0;
-          SND_DATA: begin
-            write_buffer_left_pointer <= write_buffer_left_pointer + 1 == WRITE_BUFFER_LENGTH_BYTES*8 ? 0 : write_buffer_left_pointer + 1;
-            tx <= write_buffer[write_buffer_left_pointer];
+        case (tx_output_state_q)
+          SND_IDLE: tx <= 1;
+          SND_START_BIT: begin
+            //Grab to the partial write
+            partial_write <= write_buffer[write_buffer_left_pointer];
+            tx <= 0;
+            //Update the pointer
+            write_buffer_left_pointer <= write_buffer_left_pointer + 1 == WRITE_BUFFER_LENGTH_BYTES_TRUNC ? 0 : write_buffer_left_pointer + 1;
+            //Cannot be full anymore after we have grabbed
+            write_buffer_full <= 0;
           end
-          SND_STOP:      tx <= 1;
+          SND_DATA: begin
+            tx <= partial_write[tx_bit_counter];
+          end
+          SND_STOP: tx <= 1;
         endcase
       end
 
@@ -163,39 +198,54 @@ Outline:
           2'b00: begin
             automatic
             logic signed [$clog2(
-READ_BUFFER_LENGTH_BYTES * 8
+READ_BUFFER_LENGTH_BYTES
 ) : 0]
             difference = read_buffer_pointer - read_buffer_left_pointer;
-            if (difference >= 0) read_access.rdata <= 64'(difference >>> 3);
-            else read_access.rdata <= (READ_BUFFER_LENGTH_BYTES * 8 + 64'(difference)) >>> 3;
+            if (difference >= 0) read_access.rdata <= 64'(difference);
+            else read_access.rdata <= (64'(READ_BUFFER_LENGTH_BYTES) + 64'(difference));
           end
           2'b01: begin
             //Pop from the buffer
             automatic
             logic [$clog2(
-READ_BUFFER_LENGTH_BYTES * 8
-) - 1 : 0]
-            lp64 = read_buffer_left_pointer + 64;
-            if (lp64 >= READ_BUFFER_LENGTH_BYTES * 8) begin
-              read_buffer_left_pointer <= lp64 - (READ_BUFFER_LENGTH_BYTES * 8) > read_buffer_pointer ? read_buffer_pointer : lp64 - (READ_BUFFER_LENGTH_BYTES * 8);
+READ_BUFFER_LENGTH_BYTES
+) : 0]
+            plus_8 = {1'b0, read_buffer_left_pointer} + 8;
+
+            //Check if we passed it
+            if((plus_8 > {1'b0, read_buffer_pointer} && read_buffer_left_pointer < read_buffer_pointer) || (read_buffer_left_pointer >= read_buffer_pointer && plus_8 - READ_BUFFER_LENGTH_BYTES > {1'b0, read_buffer_pointer})) begin
+              //If so, clamp
+              read_buffer_left_pointer <= read_buffer_pointer;
             end else begin
-              read_buffer_left_pointer <= lp64 > read_buffer_pointer ? read_buffer_pointer : lp64;
+              read_buffer_left_pointer <= plus_8 >= READ_BUFFER_LENGTH_BYTES ?
+                  plus_8[$clog2(READ_BUFFER_LENGTH_BYTES)-1 : 0] - READ_BUFFER_LENGTH_BYTES_TRUNC :
+                  plus_8[$clog2(READ_BUFFER_LENGTH_BYTES)-1 : 0];
             end
-            for (logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] i = 0; i < 64; i++) begin
-              automatic logic [$clog2(READ_BUFFER_LENGTH_BYTES * 8) - 1 : 0] wrapped_pointer;
-              wrapped_pointer = read_buffer_left_pointer + i >= READ_BUFFER_LENGTH_BYTES * 8 ? read_buffer_left_pointer + i - READ_BUFFER_LENGTH_BYTES * 8 : read_buffer_left_pointer + i;
-              read_access.rdata[i[5:0]] <= read_buffer[wrapped_pointer];
+            //The difference is how many bytes after read_buffer_pointer we are setting to. If the difference is positive, we need to go to read_buffer_pointer. If it is negative, we need to check if it, after adding LENGTH_BYTES - 8, it is positive, in which case we also must clamp
+
+
+            // if (plus_8 >= READ_BUFFER_LENGTH_BYTES_TRUNC) begin
+            //   read_buffer_left_pointer <= plus_8 - (READ_BUFFER_LENGTH_BYTES_TRUNC) > read_buffer_pointer ? read_buffer_pointer : plus_8 - (READ_BUFFER_LENGTH_BYTES_TRUNC);
+            // end else begin
+            //   read_buffer_left_pointer <= plus_8 > read_buffer_pointer ? read_buffer_pointer : plus_8;
+            // end
+            //After pop it cannot be full
+            read_buffer_full <= 0;
+            for (logic [$clog2(READ_BUFFER_LENGTH_BYTES) - 1 : 0] i = 0; i < 8; i++) begin
+              automatic logic [$clog2(READ_BUFFER_LENGTH_BYTES) - 1 : 0] wrapped_pointer;
+              wrapped_pointer = read_buffer_left_pointer + i >= READ_BUFFER_LENGTH_BYTES_TRUNC ? read_buffer_left_pointer + i - READ_BUFFER_LENGTH_BYTES_TRUNC : read_buffer_left_pointer + i;
+              read_access.rdata[i[2:0]*8+:8] <= read_buffer[wrapped_pointer];
             end
 
           end
           2'b10: begin
             automatic
             logic signed [$clog2(
-WRITE_BUFFER_LENGTH_BYTES * 8
+WRITE_BUFFER_LENGTH_BYTES
 ) : 0]
             difference = write_buffer_pointer - write_buffer_left_pointer;
-            if (difference >= 0) read_access.rdata <= 64'(difference >>> 3);
-            else read_access.rdata <= (WRITE_BUFFER_LENGTH_BYTES * 8 + 64'(difference)) >>> 3;
+            if (difference >= 0) read_access.rdata <= 64'(difference);
+            else read_access.rdata <= (64'(WRITE_BUFFER_LENGTH_BYTES) + 64'(difference));
           end
           default: read_access.rdata <= 0;
         endcase
@@ -204,20 +254,23 @@ WRITE_BUFFER_LENGTH_BYTES * 8
       end
 
       if (write_access.awvalid && write_access.wready) begin
+        automatic logic [$clog2(WRITE_BUFFER_LENGTH_BYTES) - 1 : 0] new_write_pointer;
         write_access.bvalid <= 1;
-        for (logic [$clog2(WRITE_BUFFER_LENGTH_BYTES * 8) - 1 : 0] i = 0; i < 64; i++) begin
-          automatic logic [$clog2(WRITE_BUFFER_LENGTH_BYTES * 8) - 1 : 0] wrapped_pointer;
-          wrapped_pointer = write_buffer_pointer + i >= WRITE_BUFFER_LENGTH_BYTES * 8 ? write_buffer_pointer + i - WRITE_BUFFER_LENGTH_BYTES * 8 : write_buffer_pointer + i;
-          write_buffer[wrapped_pointer] <= write_access.wdata[i[5:0]];
+        for (logic [$clog2(WRITE_BUFFER_LENGTH_BYTES) - 1 : 0] i = 0; i < 8; i++) begin
+          automatic logic [$clog2(WRITE_BUFFER_LENGTH_BYTES) - 1 : 0] wrapped_pointer;
+          wrapped_pointer = write_buffer_pointer + i >= WRITE_BUFFER_LENGTH_BYTES_TRUNC ? write_buffer_pointer + i - WRITE_BUFFER_LENGTH_BYTES_TRUNC : write_buffer_pointer + i;
+          write_buffer[wrapped_pointer] <= write_access.wdata[i[2:0]*8+:8];
         end
-        write_buffer_pointer <= write_buffer_pointer + 64  >= WRITE_BUFFER_LENGTH_BYTES * 8 ? write_buffer_pointer + 64 - WRITE_BUFFER_LENGTH_BYTES * 8 : write_buffer_pointer + 64;
+        new_write_pointer = write_buffer_pointer + 8  >= WRITE_BUFFER_LENGTH_BYTES_TRUNC ? write_buffer_pointer + 8 - WRITE_BUFFER_LENGTH_BYTES_TRUNC : write_buffer_pointer + 8;
+        write_buffer_pointer <= new_write_pointer;
+        $display("Setting write buffer full: %b", new_write_pointer == write_buffer_left_pointer);
+        write_buffer_full <= new_write_pointer == write_buffer_left_pointer;
       end else if (writer_state_d == WR_IDLE) write_access.bvalid <= 0;
-
-      // Synchronize the async rx input
-      rx_sync_0 <= rx;
-      rx_sync_1 <= rx_sync_0;
-
     end
+    // Synchronize the async rx input
+    rx_sync_0 <= rx;
+    rx_sync_1 <= rx_sync_0;
+
   end
 
   always_comb begin
@@ -243,20 +296,15 @@ WRITE_BUFFER_LENGTH_BYTES * 8
     tx_output_state_d = SND_IDLE;
     case (tx_output_state_q)
       SND_IDLE: begin
-        //Initiate a send when we have 8 bits ready to go
+        //Initiate a send when we have a byte ready to go
         automatic
         logic signed [$clog2(
-WRITE_BUFFER_LENGTH_BYTES * 8
+WRITE_BUFFER_LENGTH_BYTES
 ) : 0]
         difference = write_buffer_pointer - write_buffer_left_pointer;
 
-        automatic logic signed [$clog2(
-WRITE_BUFFER_LENGTH_BYTES * 8
-) : 0] corrected_difference;
-        if (difference >= 0) corrected_difference = difference;
-        else corrected_difference = WRITE_BUFFER_LENGTH_BYTES * 8 + difference;
 
-        if (corrected_difference >= 8) begin
+        if (difference != 0 || write_buffer_full) begin
           //We are ready
           tx_output_state_d = SND_START_BIT;
         end else tx_output_state_d = SND_IDLE;
@@ -287,7 +335,7 @@ WRITE_BUFFER_LENGTH_BYTES * 8
     if (read_access.arvalid && read_access.arready) begin
       automatic
       logic [$clog2(
-READ_BUFFER_LENGTH_BYTES * 8
+READ_BUFFER_LENGTH_BYTES
 ) : 0]
       subtracted = (read_buffer_pointer - 64);
       reader_state_d = RS_WAITING_FOR_ACCEPT;
@@ -299,17 +347,31 @@ READ_BUFFER_LENGTH_BYTES * 8
 
     //We are already ready to recieve a write, unless we never got onconfrimation of the last one being valid
     //There is only one valid write address, so we actually don't care about this one
+    begin
+      automatic
+      logic signed [$clog2(
+WRITE_BUFFER_LENGTH_BYTES
+) : 0]
+      difference = ($clog2(
+          WRITE_BUFFER_LENGTH_BYTES
+      ) + 1)'(signed'(write_buffer_left_pointer)) - ($clog2(
+          WRITE_BUFFER_LENGTH_BYTES
+      ) + 1)'(signed'(write_buffer_pointer));
+      debug_difference = difference;
+      if (difference >= 0)
+        can_accept_write = !write_buffer_full && (difference >= 8 || difference == 0);
+      else can_accept_write = !write_buffer_full && (WRITE_BUFFER_LENGTH_BYTES + difference >= 8);
 
-    can_accept_write     = (write_buffer_left_pointer != write_buffer_pointer - 64) && (write_buffer_left_pointer != write_buffer_pointer + WRITE_BUFFER_LENGTH_BYTES*8 - 64);
-    if (writer_state_q == WR_IDLE) begin
-      write_access.wready = can_accept_write;
-      writer_state_d      = write_access.awvalid ? WR_WAITING_FOR_ACCEPT : WR_IDLE;
-    end else begin
-      //TODO: Get this to work with timing. write_access.bready is always 1 for us so it is fine
-      write_access.wready = can_accept_write;  // & write_access.bready;
-      writer_state_d      = write_access.bready ? WR_IDLE : WR_WAITING_FOR_ACCEPT;
+      if (writer_state_q == WR_IDLE) begin
+        write_access.wready = can_accept_write;
+        writer_state_d      = write_access.awvalid ? WR_WAITING_FOR_ACCEPT : WR_IDLE;
+      end else begin
+        //TODO: Get this to work with timing. write_access.bready is always 1 for us so it is fine
+        write_access.wready = can_accept_write;  // & write_access.bready;
+        writer_state_d      = write_access.bready ? WR_IDLE : WR_WAITING_FOR_ACCEPT;
+      end
+      write_access.awready = write_access.wready;
     end
-    write_access.awready = write_access.wready;
   end
 
 

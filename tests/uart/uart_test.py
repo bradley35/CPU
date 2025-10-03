@@ -25,8 +25,8 @@ async def uart_test(dut):
     """
     log = logging.getLogger("cocotb.tb")
     log.setLevel(logging.DEBUG)
-    uart_source = UartSource(dut.uart.rx, baud=166600, bits=8)
-    uart_sink = UartSink(dut.uart.tx, baud=166600, bits=8)
+    uart_source = UartSource(dut.uart.rx, baud=9600, bits=8)
+    uart_sink = UartSink(dut.uart.tx, baud=9600, bits=8)
     cocotb.start_soon(Clock(dut.clk, 83, units="ns").start())
     await _reset(dut)
 
@@ -63,6 +63,8 @@ async def uart_test(dut):
     await uart_source.wait()
     output9 = await uart_sink.read()
     print(output9)
+
+
     # output10 = await uart_sink.read(8)
     # print(output10)
     # output11 = await uart_sink.read(8)

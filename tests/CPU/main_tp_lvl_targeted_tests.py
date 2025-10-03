@@ -11,7 +11,7 @@ async def nothing_test(dut):
     clock = Clock(dut.clk, 1, unit="ns")
     await resetAndPrepare(dut)
     cocotb.start_soon(clock.start())
-    await Timer(1000, unit="ns")
+    await Timer(10000, unit="ns")
     clock.stop()
     
 @cocotb.test()
@@ -2300,6 +2300,33 @@ async def test_patch_two_after_current_with_fence(dut):
     # Expected: x6 = 4 (spacer add) + 1 (patched TARGET) = 5
     checkFinished(dut)
     checkRegister(6, 5, dut, False)
+
+
+@cocotb.test()
+async def test_jal_sets_return_address(dut):
+    """
+    Confirms that 'jal x1, target' correctly sets x1 to PC+4.
+    """
+    asm = """
+    # PC=0: JAL instruction. It will jump to 'target' (PC=8)
+    #       and should set x1 to the address of the next instruction (PC=4).
+    jal x1, target
+
+    # PC=4: This instruction is skipped due to the jump. Its address is the expected return address.
+    nop
+
+    target:
+    # PC=8: Program ends here.
+    ecall
+    """
+    loadAsmToMemory(asm, dut)
+    await resetAndPrepare(dut)
+    cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
+    await First(RisingEdge(dut.program_complete), Timer(50, unit="ns"))
+
+    # The return address should be 4 (the address of the 'nop' after 'jal')
+    checkRegister(1, 4, dut, False)
+    checkFinished(dut)
     
 
 

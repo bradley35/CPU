@@ -3,6 +3,11 @@ CC      := riscv64-unknown-elf-gcc
 LD      := $(CC)
 OBJCOPY := riscv64-unknown-elf-objcopy
 
+OBJDUMP       ?= riscv64-unknown-elf-objdump
+DISASM_ARCH   ?= riscv:rv64
+DISASM_ENDIAN ?= -EL
+BASE          ?= 0x0
+
 MEMORY_CHUNKS := 1
 
 CHUNK_INDICES := $(shell seq 0 $$(( $(MEMORY_CHUNKS) - 1 )))
@@ -55,10 +60,20 @@ $(BUILD)/%.o: %.c | $(BUILD)
 $(BUILD):
 	mkdir -p $(BUILD)
 
+$(BUILD)/app.dump: $(BUILD)/app.bin
+	$(OBJDUMP) -D -b binary -m $(DISASM_ARCH) $(DISASM_ENDIAN) -M numeric --adjust-vma=$(BASE) $< > $@
+
+disasm: $(BUILD)/app.dump
+
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: all app clean
+.PHONY: all app clean disasm
 
 # Auto header deps (safe if missing on first run)
 -include $(DEPS)
+
+
+
+
+

@@ -368,6 +368,7 @@ module tp_lvl (
     .ex_result_q(execute_stage_result_q),
 
     .ex_op_2_pt_d(execute_stage_operand_2_pt_d),
+    .ex_op_2_pt_q(execute_stage_operand_2_pt_q),
 
     .ex_result_valid_q(execute_stage_result_is_valid_q && !program_complete),
     .ex_result_valid_d(execute_stage_result_is_valid_d && !program_complete),

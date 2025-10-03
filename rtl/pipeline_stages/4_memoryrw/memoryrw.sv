@@ -4,6 +4,7 @@ module memoryrw (
 
   /* Latched Ex interface */
   input double_word                ex_result_q,
+  input double_word                ex_op_2_pt_q,
   input logic                      ex_result_valid_q,
   input logic                      ex_is_branch_addr_q,
   input logic                      ex_is_mem_addr_q,
@@ -69,7 +70,7 @@ module memoryrw (
       should_reset_branch_out <= 0;
     end else begin
       result_q                <= ex_is_mem_addr_q ? trunc_result_next : raw_result_next;
-      result_q_plus_4         <= {raw_result_next[63:1], 1'b0} + 4;
+      result_q_plus_4         <= {ex_op_2_pt_q[63:1], 1'b0} + 4;
       result_valid_q          <= result_valid_d;
       result_is_branch_addr_q <= ex_is_branch_addr_q;
       write_to_rd_q           <= ex_write_to_rd_q;
