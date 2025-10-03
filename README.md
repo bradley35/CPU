@@ -33,7 +33,7 @@ The caches use a very large amount of LUTs because they read entire lines from B
 
 #### Critical Path:
 
-The critical path is: `memory stage result (one input to a LOAD/STORE) -> Execute stage (add the immediate from the instruction to the forwarded address) -> Memory Controller (where to route the instruction) -> Check if appropriate memory device (i.e. UART or Cache) is ready to recieve a request -> Assert stall -> Prevent instruction fetch/execute/decode registers from being updated`. On my FPGA, this takes almost exactly 10 ns (which meets the 100 Mhz clock of the device), and given my current design, there is little way to optimize it further. I have already replicated the input path to the execute stage (to reduce fanout) and provided a dedicated add path just to calculate memory addresses.
+The critical path is: `memory stage result (one input to a LOAD/STORE) -> Execute stage (add the immediate from the instruction to the forwarded address) -> Memory Controller (where to route the instruction) -> Check if appropriate memory device (i.e. UART or Cache) is ready to receive a request -> Assert stall -> Prevent instruction fetch/execute/decode registers from being updated`. On my FPGA, this takes almost exactly 10 ns (which meets the 100 Mhz clock of the device), and given my current design, there is little way to optimize it further. I have already replicated the input path to the execute stage (to reduce fanout) and provided a dedicated add path just to calculate memory addresses.
 
 
 ## Firmware
@@ -44,14 +44,16 @@ All firmware code is in the `firmware/` folder.
 ```markdown
 project/
 ├── rtl/                    — All RTL code
-│   ├── pipeline_stages/    - Individual Stage Logic
-│   ├── memory/             — Cache + Memory Logic
-│   ├── registers/          - Register Table + Types
+│   ├── pipeline_stages/      - Individual Stage Logic
+│   ├── memory/               — Cache + Memory Logic
+│   ├── registers/            - Register Table + Types
 │   └── tp_lvl.sv
-└── tests/
-    ├── memory/             — Tests targeting the cache + BRAM memory store
-    └── CPU/                - Tests targeting the CPU.
-                              Includes targeted assembly tests as well as randomized tests.
+├── tests/                  — Verilator Cocotb tests
+│   ├── memory/               — Tests targeting the cache + BRAM memory store
+│   └── CPU/                  - Tests targeting the CPU.
+│                               Includes targeted assembly tests as well as randomized tests.
+├── firmware/               — C code, linker script, and compilation tools
+└── vivado/                 — TCL scripts, timing reports, and FPGA synthesis files
 ```
 Note on AI: I did not use AI to write any of the RTL code. However, I found that ChatGPT is very good at writing tests and as such, I used it for three things:
 a) writing tests based on a description (i.e. jump into a branch), modelled after ones I had already written,
