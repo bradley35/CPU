@@ -13,8 +13,8 @@ Personal project to push knowledge of computer architecture and learn SystemVeri
   - Currently built to infer BRAM for main-memory
 * Can communicate over UART via memory mapped io.
  
-
-
+Schematic (I need to redraw this manually to simplify, but I thought the image was cool nonetheless):
+![my_schematic](https://github.com/user-attachments/assets/0cecf210-64c5-40ba-ab97-f537a6d20a61)
  
 All CPU design code is in the `rtl/` folder
 
@@ -24,6 +24,17 @@ I have tested it with the Verilator simulator on a series of Cocotb testbenches,
 ## FPGA
 
 After extensive refactoring (and logic redesigning) to meet timing and LUT count, I have gotten it to run on my Xilinx Spartan 7 FPGA @ 100 Mhz and successfully communicated over uart. TCL scripts & timing reports are in the `vivado/` folder. This was important to me, as it shows that the rtl code is synthesizeable.
+
+#### Lut Usage:
+
+The caches use a very large amount of LUTs because they read entire lines from BRAMs. Therefore, any mux on a line (currently set to 64 bytes) requires 512 single-bit LUTs. I worked hard to minimize any switching logic involving full-cache lines, but a small amount was unavoidable. Additionally, after retrieving a line, returning the correct entry from the line requires a series of MUXs to select from 512 bits down to 64 bits. The data cache is larger than the if cache, as the if cache has write disabled.
+
+<img width="330" height="330" alt="Screenshot 2025-10-03 at 2 14 31 PM" src="https://github.com/user-attachments/assets/74e9810f-4274-47d4-bd70-2e091b0df20f" />
+
+#### Critical Path:
+
+The critical path is: `memory stage result (one input to a LOAD/STORE) -> Execute stage (add the immediate from the instruction to the forwarded address) -> Memory Controller (where to route the instruction) -> Check if appropriate memory device (i.e. UART or Cache) is ready to recieve a request -> Assert stall -> Prevent instruction fetch/execute/decode registers from being updated`. On my FPGA, this takes almost exactly 10 ns (which meets the 100 Mhz clock of the device), and given my current design, there is little way to optimize it further. I have already replicated the input path to the execute stage (to reduce fanout) and provided a dedicated add path just to calculate memory addresses.
+
 
 ## Firmware
 C code (`main.c`) is aligned in memory (`linker_script.ld`), compiled against the RV64I target (`Makefile`) and finally, the resulting bin is split into hex memory chunks (`bin_separator.rs`) to be loaded by the synthesizer. I wrote all of these myself. At present, the C code only sends back a simple UART response to demonstrate that it is working.
