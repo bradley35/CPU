@@ -6,6 +6,7 @@ module execute (
   input logic                      input_valid,
   input logic                      thirty_two_bit_op,
   input double_word                ex_op_1,
+  input double_word                ex_op_1_fast,
   input double_word                ex_op_2,
   //Used for memory write, where we need to calculate an address (operand 1,2)
   //and send forward the data to store. Also used to pass through branch address
@@ -83,6 +84,10 @@ module execute (
   end
 
   always_comb begin
+    add_result = signed'(ex_op_1_fast) + signed'(ex_misc_op);
+  end
+
+  always_comb begin
     automatic double_word tmp_result;
     automatic double_word truncated_ex_op_1;
     automatic double_word truncated_ex_op_2;
@@ -101,7 +106,6 @@ module execute (
     endcase
     tmp_result = '0;
     //1 LUT compress
-    add_result = signed'(ex_op_1) + signed'(ex_misc_op);
 
     unique case (alu_op)
       O_EQ:  tmp_result[0] = truncated_ex_op_1 == ex_op_2;

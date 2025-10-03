@@ -108,6 +108,7 @@ module memory_with_bram_cache #(
   retrieval_spot_t                                 retrieved_source;
   line_t                                           retrieved_cache_line_synth;
   tag_t                                            retrieved_tag;
+  logic                                            use_address_tag_instead;
   line_meta_t                                      retrieved_meta;
 
   line_t                                           replaced_cache_line;
@@ -124,17 +125,30 @@ module memory_with_bram_cache #(
   logic                   [        ADDR_W - 1 : 0] write_reg;
   logic                   [        DATA_W/8-1 : 0] wstrb_reg;
 
-  logic                   [          ADDR_W - 1:0] accepted_addr;
+  logic                   [          ADDR_W - 1:0] read_addr;
+  address_parts_rt                                 read_addr_parts;
+  line_meta_t                                      read_addr_meta;
+  logic                   [          ADDR_W - 1:0] write_addr;
+  address_parts_rt                                 write_addr_parts;
+  line_meta_t                                      write_addr_meta;
+
+  line_meta_t                                      accepted_address_meta;
   address_parts_rt                                 accepted_addr_parts;
+
+
+  logic                                            is_read_not_write;
   logic                                            new_request_accepted;
 
   logic                                            memory_req_dispatched;
 
   logic                                            dumping;
+  logic                                            can_accept_request;
   logic unsigned          [        INDEX_BITS : 0] dump_counter;
 
   //These should live in BRAM and therefore be accessed behind always_ff
-  tag_t                                            cache_tags                 [CACHE_LINES];
+  (* RAM_STYLE = "block" *)tag_t                                            cache_tags                 [CACHE_LINES];
+  logic unsigned          [    INDEX_BITS - 1 : 0] requested_tag;
+  logic                                            tag_req_en;
   line_meta_t                                      cache_valid_dirty          [CACHE_LINES];
   logic                   [    INDEX_BITS - 1 : 0] cache_read_index;
   line_t                                           raw_read_line;
@@ -155,38 +169,44 @@ module memory_with_bram_cache #(
     end
   endgenerate
 
+  always_ff @(posedge clk) begin
+    retrieved_tag <= cache_tags[requested_tag];
+    if (effective_state == EF_READ_MISS || effective_state == EF_WRITE_MISS)
+      cache_tags[address_reg_parts.index] <= address_reg_parts.tag;
+  end
+
+
   assign memory_access_out.dumping_cache = dumping;
   logic writeback_neccesary;
 
   always_ff @(posedge clk) begin
     if (rst) begin
       current_state = IDLE;
-      cache_tags            <= '{default: '0};
-      cache_valid_dirty     <= '{default: '0};
-      retrieved_tag         <= '0;
-      retrieved_meta        <= '0;
-      replaced_tag          <= '0;
-      replaced_meta         <= '0;
-      replaced_index        <= '0;
-      address_reg           <= '0;
-      write_reg             <= '0;
-      wstrb_reg             <= '0;
-      memory_req_dispatched <= '0;
-      dumping               <= '0;
-      dump_counter          <= '0;
-      retrieved_source      <= RS_NONE;
-      replaced_source       <= RS_NONE;
-      cache_write_line_q    <= 0;
+      cache_valid_dirty       <= '{default: '0};
+      retrieved_meta          <= '0;
+      replaced_tag            <= '0;
+      replaced_meta           <= '0;
+      replaced_index          <= '0;
+      address_reg             <= '0;
+      write_reg               <= '0;
+      wstrb_reg               <= '0;
+      memory_req_dispatched   <= '0;
+      dumping                 <= '0;
+      dump_counter            <= '0;
+      retrieved_source        <= RS_NONE;
+      replaced_source         <= RS_NONE;
+      cache_write_line_q      <= 0;
+      use_address_tag_instead <= 0;
     end else begin
-      current_state        <= next_state;
-      cache_write_line_q   <= cache_write_line;
+      current_state           <= next_state;
+      cache_write_line_q      <= cache_write_line;
       //If the next state is idle, we must be done dumping.
 
-      dumping              <= (dumping | dump_cache) && (next_state != IDLE);
+      dumping                 <= (dumping | dump_cache) && (next_state != IDLE);
 
-      retrieved_cache_line <= memory_access_out.resp_rdata;
+      retrieved_cache_line    <= memory_access_out.resp_rdata;
       //Set to raw as we will continue grabbing the same address anyway and it will now be correct
-      retrieved_source     <= RS_RAW;
+      retrieved_source        <= RS_RAW;
       //We can get away with this
       // replaced_cache_line <= replaced_cache_line_synth;
       // if (replaced_source != RS_NONE) begin
@@ -195,11 +215,13 @@ module memory_with_bram_cache #(
 
       /* Misleading naming to avoid MUXes (i.e. always store and only use value when it is valid) */
       //retrieved_cache_line <= redirect_replacing ? replacing_cache_line : cache_write_line;
-      if (new_request_accepted) begin
+      //Any time we CAN accept, assume we did for speed
+      use_address_tag_instead <= 0;
+      if (can_accept_request) begin
         automatic
         logic
         redirect_replacing = (cache_write_index == accepted_addr_parts.index) && writing_meta.valid;
-        address_reg <= accepted_addr;
+        address_reg <= is_read_not_write ? read_addr : write_addr;
         write_reg <= cache_wr_int.wdata;
         wstrb_reg <= cache_wr_int.wstrb;
         //What is in replacing now will be in WRITE next cycle
@@ -207,8 +229,7 @@ module memory_with_bram_cache #(
             DATA_W/8
         )]] ? RS_WRITE : RS_RAW;
         //Tag will be unchanged, as whatever is stored at this index has the same tag as the replacement
-        retrieved_tag <= cache_tags[accepted_addr_parts.index];
-        retrieved_meta <= redirect_replacing ? writing_meta : cache_valid_dirty[accepted_addr_parts.index];
+        retrieved_meta <= redirect_replacing ? writing_meta : accepted_address_meta;
 
         memory_req_dispatched <= 0;
       end
@@ -224,8 +245,7 @@ module memory_with_bram_cache #(
               //replaced_cache_line <= retrieved_cache_line_synth;
               //Always grab the clean version from BRAM
               replaced_source <= RS_RAW;
-              cache_tags[address_reg_parts.index] <= address_reg_parts.tag;
-              retrieved_tag <= address_reg_parts.tag;
+              use_address_tag_instead <= 1;
               replaced_tag <= retrieved_tag;
 
               cache_valid_dirty[address_reg_parts.index] <= '{
@@ -242,7 +262,6 @@ module memory_with_bram_cache #(
           end
         end
         EF_WRITE_HIT: begin
-          cache_tags[cache_write_index]        <= writing_tag;
           cache_valid_dirty[cache_write_index] <= writing_meta;
         end
         default: ;
@@ -260,7 +279,6 @@ module memory_with_bram_cache #(
               end else begin
 
                 replaced_source <= RS_RAW;
-                replaced_tag    <= cache_tags[dump_counter[INDEX_BITS-1:0]];
                 replaced_meta   <= cache_valid_dirty[dump_counter[INDEX_BITS-1:0]];
                 replaced_index  <= dump_counter[INDEX_BITS-1:0];
                 dump_counter    <= dump_counter + 1;
@@ -280,6 +298,7 @@ module memory_with_bram_cache #(
   end
   always_comb begin
     cache_read_index    = effective_state == EF_DUMPING ?  dump_counter[INDEX_BITS-1:0] :  (new_request_accepted ? accepted_addr_parts.index : address_reg_parts.index);
+    requested_tag =  effective_state == EF_DUMPING ?  dump_counter[INDEX_BITS-1:0] :  (new_request_accepted ? accepted_addr_parts.index : address_reg_parts.index);
   end
   always_comb begin
     case (retrieved_source)
@@ -305,14 +324,18 @@ module memory_with_bram_cache #(
       IDLE: effective_state = EF_IDLE;
       READ:
       case (address_match(
-          address_reg, retrieved_tag, retrieved_meta
+          address_reg,
+          use_address_tag_instead ? address_reg_parts.tag : retrieved_tag,
+          retrieved_meta
       ))
         'b1: effective_state = EF_READ_HIT;
         'b0: effective_state = EF_READ_MISS;
       endcase
       WRITE:
       case (address_match(
-          address_reg, retrieved_tag, retrieved_meta
+          address_reg,
+          use_address_tag_instead ? address_reg_parts.tag : retrieved_tag,
+          retrieved_meta
       ))
         'b1: effective_state = EF_WRITE_HIT;
         'b0: effective_state = EF_WRITE_MISS;
@@ -327,7 +350,16 @@ module memory_with_bram_cache #(
 
     next_state           = current_state;
     new_request_accepted = 0;
-    accepted_addr        = '0;
+    can_accept_request   = 0;
+    read_addr            = cache_rd_int.araddr;
+    read_addr_parts      = address_parts(read_addr);
+    write_addr           = cache_wr_int.awaddr;
+    write_addr_parts     = address_parts(write_addr);
+    read_addr_meta       = cache_valid_dirty[read_addr_parts.index];
+    write_addr_meta      = cache_valid_dirty[write_addr_parts.index];
+
+    is_read_not_write    = 0;
+
 
 
     unique case (effective_state)
@@ -350,7 +382,7 @@ module memory_with_bram_cache #(
         end
 
         if (writeback_neccesary && transaction_complete) next_state = WRITEBACK;
-
+        can_accept_request = transaction_complete && !writeback_neccesary && !dump_bypass;
         cache_rd_int.arready = transaction_complete && !writeback_neccesary && !dump_bypass;
         //NOTE we cannot accept simultaneous reads/writes. However, this was causing a timing issue, so we pretend that we can
         //In the future, it would make sense to register the write and deal with it later
@@ -365,13 +397,13 @@ module memory_with_bram_cache #(
           //Just accepted read
           next_state           = READ;
           new_request_accepted = 1;
-          accepted_addr        = cache_rd_int.araddr;
+          is_read_not_write    = 1;
         end
         if (cache_wr_int.awready && cache_wr_int.awvalid) begin
           //Just accepted write
           next_state           = WRITE;
           new_request_accepted = 1;
-          accepted_addr        = cache_wr_int.awaddr;
+          is_read_not_write    = 0;
         end
 
 
@@ -392,8 +424,9 @@ module memory_with_bram_cache #(
         cache_wr_int.wready  = cache_wr_int.awready;
       end
     endcase
-    accepted_addr_parts = address_parts(accepted_addr);
-    address_reg_parts   = address_parts(address_reg);
+    address_reg_parts     = address_parts(address_reg);
+    accepted_addr_parts   = is_read_not_write ? read_addr_parts : write_addr_parts;
+    accepted_address_meta = is_read_not_write ? read_addr_meta : write_addr_meta;
   end
 
   logic [             OFFSET_BITS - 1 : 0] offset_debug_out;
@@ -463,7 +496,7 @@ module memory_with_bram_cache #(
           //cache_write_line = retrieved_cache_line_synth;
           //cache_write_line[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = new_word;
           cache_write_line = '{default: new_word};
-          writing_tag = retrieved_tag;
+          writing_tag = use_address_tag_instead ? address_reg_parts.tag : retrieved_tag;
           writing_meta = '{valid: 1, dirty : 1};
           cache_write_en[address_reg_parts.offset[OFFSET_BITS-1 : $clog2(DATA_W/8)]] = 1'b1;
           cache_write_index = address_reg_parts.index;
@@ -476,7 +509,9 @@ module memory_with_bram_cache #(
     if (writeback_neccesary) begin
 
       memory_access_out.req_valid = 1;
-      memory_access_out.req_addr  = {replaced_tag, replaced_index, (OFFSET_BITS)'('b0)};
+      memory_access_out.req_addr = {
+        dumping ? retrieved_tag : replaced_tag, replaced_index, (OFFSET_BITS)'('b0)
+      };
       memory_access_out.req_write = 1;
 
       memory_access_out.req_wstrb = '{default: 8'hFF};

@@ -172,8 +172,9 @@ module tp_lvl (
   instruction_fetch fetch_stage (
     .clk,
     .rst,
-    .pc              (register_table.full_table.pc),
-    .pc_next         (register_table.pc_next),
+    .pc              (register_table_full_table.pc),
+    .pc_next         (register_table_pc_next),
+    .branch_pc       (override_pc_write),
     .pc_if_write_en,
     .pc_if_write,
     .output_valid    (fetch_stage_output_valid),
@@ -254,7 +255,8 @@ module tp_lvl (
 `ifndef VIVADO
   typedef logic [63:0] double_word;
 `endif
-  double_word operand_1;
+  (* DONT_TOUCH = "TRUE" *)double_word operand_1_fast;
+  (* DONT_TOUCH = "TRUE" *)double_word operand_1;
   double_word operand_2;
   always_comb begin
     case (decode_stage_operand_1_fwd)
@@ -263,6 +265,13 @@ module tp_lvl (
       WB:      operand_1 = writeback_register_value_to_write_reg;
       WB_BUF:  operand_1 = writeback_wb_buffer_1;
       default: operand_1 = decode_stage_ex_op_1;
+    endcase
+    case (decode_stage_operand_1_fwd)
+      ALU:     operand_1_fast = execute_stage_result_q;
+      MEM:     operand_1_fast = memory_stage_result_q;
+      WB:      operand_1_fast = writeback_register_value_to_write_reg;
+      WB_BUF:  operand_1_fast = writeback_wb_buffer_1;
+      default: operand_1_fast = decode_stage_ex_op_1;
     endcase
     case (decode_stage_operand_2_fwd)
       ALU:     operand_2 = execute_stage_result_q;
@@ -304,6 +313,7 @@ module tp_lvl (
     .input_valid                     (decode_stage_output_valid),
     .thirty_two_bit_op               (decode_stage_thirty_two_bit_op),
     .ex_op_1                         (operand_1),
+    .ex_op_1_fast                    (operand_1_fast),
     .ex_op_2                         (operand_2),
     //Used for memory write, where we need to calculate an address (operand 1,2)
     //and send forward the data to store. Also used to pass through branch address
@@ -392,7 +402,8 @@ module tp_lvl (
     .mem_rd      (data_controlled_interface.rd_mst),
     .mem_wr      (data_controlled_interface.wr_mst),
 
-    .result_q       (memory_stage_result_q),
+    .result_q(memory_stage_result_q),
+
     .result_q_plus_4(memory_stage_result_q_plus_4),
 
     .result_valid_q(memory_stage_result_valid_q),

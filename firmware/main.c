@@ -36,7 +36,7 @@ void main()
         write_only_to_uart = ((unsigned long *)TEXT)[1];
         for (int i = 0; i < count; i++)
         {
-            char to_write[8];
+            char to_write[8] = {0};
             to_write[0] = small_buffer[i];
             write_only_to_uart = *((unsigned long *)to_write);
         }

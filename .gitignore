@@ -9,3 +9,6 @@ sim_build/
 firmware/build/
 firmware/bin_seperator/target/
 vivado/.Xil/
+vivado/**/*.log
+vivado/**/*.jou
+vivado/Sim/

@@ -50,26 +50,24 @@ module memory_controller (
       CACHE: read.arready = cache_read.arready && read_response_accepted_d;
       UART:  read.arready = uart_read.arready && read_response_accepted_d;
     endcase
-
+    cache_read.araddr = read.araddr;
+    uart_read.araddr  = read.araddr;
     if (!read.arvalid) begin
       cache_read.arvalid = 1'b0;
-      cache_read.araddr  = '0;
       uart_read.arvalid  = 1'b0;
-      uart_read.araddr   = '0;
     end else begin
       // Forward AR to selected target; deassert other
+
       unique case (rd_next_connect)
         CACHE: begin
           cache_read.arvalid = read.arvalid && read_response_accepted_d;
-          cache_read.araddr  = read.araddr;
+
           uart_read.arvalid  = 1'b0;
-          uart_read.araddr   = '0;
         end
         UART: begin
           cache_read.arvalid = 1'b0;
-          cache_read.araddr  = '0;
           uart_read.arvalid  = read.arvalid && read_response_accepted_d;
-          uart_read.araddr   = read.araddr;
+
         end
       endcase
     end
@@ -117,26 +115,23 @@ module memory_controller (
   end
 
   assign write_response_accepted_d = write_response_accepted_q || (write.bready && write.bvalid);
-  assign wr_next_connect           = (write.awaddr >= 64'hFFFFFFFFFFFFF000) ? UART : CACHE;
+  assign wr_next_connect           = (write.awaddr[63:61] == 3'b111) ? UART : CACHE;
 
   always_comb begin
     unique case (wr_next_connect)
       CACHE: write.awready = cache_write.awready && write_response_accepted_d;
       UART:  write.awready = uart_write.awready && write_response_accepted_d;
     endcase
-
+    cache_write.awaddr = write.awaddr;
+    uart_write.awaddr  = write.awaddr;
     unique case (wr_next_connect)
       CACHE: begin
         cache_write.awvalid = write.awvalid && write_response_accepted_d;
-        cache_write.awaddr  = write.awaddr;
         uart_write.awvalid  = 1'b0;
-        uart_write.awaddr   = '0;
       end
       UART: begin
         cache_write.awvalid = 1'b0;
-        cache_write.awaddr  = '0;
         uart_write.awvalid  = write.awvalid && write_response_accepted_d;
-        uart_write.awaddr   = write.awaddr;
       end
     endcase
   end

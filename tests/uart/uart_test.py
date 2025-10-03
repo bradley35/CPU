@@ -65,6 +65,8 @@ async def uart_test(dut):
     print(output9)
 
 
+
+
     # output10 = await uart_sink.read(8)
     # print(output10)
     # output11 = await uart_sink.read(8)

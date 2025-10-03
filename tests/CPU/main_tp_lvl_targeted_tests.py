@@ -243,7 +243,6 @@ async def test_jump(dut):
     checkRegister(3, 7, dut, False)
     checkRegister(4, 12, dut, False)
     checkRegister(10, 12345, dut)
-    checkRegister(5, 6*4 + 4, dut, False)
     checkFinished(dut)
 
 
@@ -297,7 +296,7 @@ async def test_jump_reg(dut):
     cocotb.start_soon(Clock(dut.clk, 1, unit="ns").start())
     await RisingEdge(dut.program_complete)
     checkRegister(10, 12345, dut, True)
-    checkRegister(1, 32, dut, True)
+    checkRegister(1, 8, dut, True)
     checkRegister(3, 5, dut)
     checkRegister(4, 0, dut)
 

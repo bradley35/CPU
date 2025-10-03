@@ -4,6 +4,7 @@ module instruction_fetch (
 
   //Read and advance PC
   input  double_word pc,
+  input  double_word branch_pc,
   input  double_word pc_next,
   output logic       pc_if_write_en,
   output double_word pc_if_write,
@@ -73,8 +74,8 @@ module instruction_fetch (
     pc_if_write_en = (pc_if_write != pc) && !stall;
 
     //Always request the next pc. Do it here so that it gets latched in the memory controller
-    //Doesn't matter if it is ready
-    (* KEEP = "TRUE" *)mem_rd.araddr  = pc_next;
+    //This cannot depend on the stall bit for timing reasons
+    mem_rd.araddr  = branch_reset_in ? branch_pc : pc_if_write;  //pc_next;
     //Our request is always valid, since we need a read every cycle
     mem_rd.arvalid = 1 && !rst;
     mem_rd.rready  = 1;

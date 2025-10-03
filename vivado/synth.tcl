@@ -86,9 +86,9 @@ report_utilization     -file build/util.rpt
 report_utilization -hierarchical -hierarchical_depth 3 -file build/util_hier.rpt
 report_timing_summary  -file build/timing.rpt
 
-place_design
-route_design
-write_bitstream -force build/top.bit
+# place_design
+# route_design
+# write_bitstream -force build/top.bit
 
 
 # Place and route

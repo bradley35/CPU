@@ -223,6 +223,7 @@ module instruction_decode (
       F_AND: alu_op_d = O_AND;
       SB, SH, SW, SD: alu_op_d = O_ADD_MISC_OP_2_PT;
       LB, LH, LW, LBU, LHU, UNDEFINED_F: alu_op_d = O_ADD;
+      F_JALR: alu_op_d = O_ADD_MISC_OP_2_PT;
       default: alu_op_d = O_ADD;
     endcase
 
@@ -331,7 +332,10 @@ module instruction_decode (
       // All immediate
       I: begin
         unique case (op)
-          JALR:    operand_2_d = 64'(signed'(rs2_imm1));
+          JALR: begin
+            misc_op_d   = 64'(signed'(rs2_imm1));
+            operand_2_d = instruction_pc;
+          end
           MISC_MEM: begin
             operand_1_d = 4;
             operand_2_d = instruction_pc;

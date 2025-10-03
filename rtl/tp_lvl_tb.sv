@@ -23,7 +23,7 @@ module tp_lvl_tb;
   always #5 clk = ~clk;
 
   // UART parameters
-  localparam CLOCK_FREQ_OVER_BAUD_RATE = 1250;
+  localparam CLOCK_FREQ_OVER_BAUD_RATE = 868;
 
   // Task to send one byte over UART
   task send_uart_byte(input [7:0] data);
