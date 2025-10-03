@@ -1,5 +1,5 @@
 # Classic 5-stage pipelined RISCV CPU project
-Personal project to push knowledge of computer architecture and learn SystemVerilog. Supports RV64I w/ Zifencei to allow for JIT. Tested in both simulator & on FPGA.
+Personal project to push knowledge of computer architecture and learn SystemVerilog. Supports RV64I w/ Zifencei to allow for JIT. Successfully runs compiled C code. Tested in both simulator & on FPGA.
 
 ## CPU Structure
 * 5 stage pipeline: Instruction Fetch -> Instruction Decode -> Execute -> Memory Read/Write -> Writeback
@@ -11,13 +11,14 @@ Personal project to push knowledge of computer architecture and learn SystemVeri
 * Flexible Memory backing  
   - Communication with main RAM is over AXI so that it can easily be swapped with vendor DRAM IP to synthesize for FPGA
   - Currently built to infer BRAM for main-memory
+* Can communicate over UART via memory mapped io.
  
-All CPU design code is in the `rtl/` folder.
+All CPU design code is in the `rtl/` folder
 
 ## Testing
 I have tested it with the Verilator simulator on a series of Cocotb testbenches, including both targetting and randomized stimuli. Verilator tests are in the `tests/` folder.
 
-After extensive refactoring to meet timing and LUT count, I have gotten it to run on my Xilinx Spartan 7 FPGA @ 100 Mhz and successfully communicated over uart. TCL scripts & timing reports are in the `vivado/` folder.
+After extensive refactoring to meet timing and LUT count, I have gotten it to run on my Xilinx Spartan 7 FPGA @ 100 Mhz and successfully communicated over uart. TCL scripts & timing reports are in the `vivado/` folder. This was important to me, as it shows that the rtl code is synthesizeable.
 
 ## Firmware
 C code (`main.c`) is aligned in memory (`linker_script.ld`), compiled against the RV64I target (`Makefile`) and finally, the resulting bin is split into hex memory chunks (`bin_seperator.rs`) to be loaded by the synthesizer. I wrote all of these myself. At present, the C code only sends back a simple UART response to demonstrate that it is working.
