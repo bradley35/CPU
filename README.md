@@ -13,7 +13,11 @@ Personal project to push knowledge of computer architecture and learn SystemVeri
   - Currently built to infer BRAM for main-memory
 * Can communicate over UART via memory mapped io
  
-Schematic (I need to redraw this manually to simplify, but I thought the image was cool nonetheless):
+Block Diagram:
+
+![CPU diagram](https://github.com/user-attachments/assets/9cd094a5-ffd1-4f34-b6f8-eb6628f1e72d)
+
+Vivado Schematic (The manually drawn diagram is much more informative, but I thought this was cool nonetheless):
 ![my_schematic](https://github.com/user-attachments/assets/0cecf210-64c5-40ba-ab97-f537a6d20a61)
  
 All CPU design code is in the `rtl/` folder
